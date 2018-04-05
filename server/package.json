@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "apollo-engine": "0.9.1",
+    "compression": "^1.7.2",
+    "dotenv": "^5.0.1",
+    "graphql-yoga": "1.7.0"
+  }
+}

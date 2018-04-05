@@ -1,0 +1,17 @@
+{
+  "name": "fullstack",
+  "version": "1.0.0",
+  "description": "This directory contains a simple fullstack example based on `graphql-yoga` and `create-react-app`.",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd frontend && npm start",
+    "server" : "cd server && npm start",
+    "start": "concurrently 'npm run client' 'npm run server'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^3.5.1"
+  }
+}
