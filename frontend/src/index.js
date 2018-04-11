@@ -1,23 +1,21 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { ApolloProvider } from 'react-apollo'
+import React from "react"
+import ReactDOM from "react-dom"
+import { ApolloProvider } from "react-apollo"
 import ApolloClient from "apollo-boost"
-import registerServiceWorker from './registerServiceWorker'
+import registerServiceWorker from "./registerServiceWorker"
 import { BrowserRouter as Router } from "react-router-dom"
 
+import "./index.css"
 
-import './index.css'
-
-import App from './App'
-
+import App from "./App"
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  uri: "http://localhost:4000/graphql",
   fetchOptions: {
-    credentials: 'include',
+    credentials: "include",
     useGETForQueries: true
   },
-  request: async (operation) => {
+  request: async operation => {
     const accessToken = localStorage.getItem("accessToken")
     const profileToken = localStorage.getItem("profileToken")
     operation.setContext({
@@ -35,6 +33,6 @@ ReactDOM.render(
       <App />
     </Router>
   </ApolloProvider>,
-  document.getElementById('root')
+  document.getElementById("root")
 )
 registerServiceWorker()

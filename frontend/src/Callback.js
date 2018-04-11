@@ -4,10 +4,10 @@
 import React, { Fragment } from "react"
 import { Link } from "react-router-dom"
 const Callback = () => (
-    <Fragment>
-        <h3>Callback Component</h3>
-        <Link to="/">Home</Link>
-    </Fragment>
+  <Fragment>
+    <h3>Callback Component</h3>
+    <Link to="/">Home</Link>
+  </Fragment>
 )
 
 export default Callback

@@ -1,15 +1,20 @@
-import React, { Component, Fragment } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect, withRouter, Switch } from "react-router-dom"
-import yoga from './yoga.png'
-import './App.css'
+import React, { Component, Fragment } from "react"
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect,
+  withRouter,
+  Switch
+} from "react-router-dom"
+import yoga from "./yoga.png"
+import "./App.css"
 // import gql from 'graphql-tag'
 // import { graphql } from 'react-apollo'
-import Lock, { loginUser, logoutUser } from './utils/auth'
+import Lock, { loginUser, logoutUser } from "./utils/auth"
 
 import Callback from "./Callback"
-import ErrorComponent from './Error';
-
-
+import ErrorComponent from "./Error"
 
 class App extends Component {
   constructor(props) {
@@ -41,7 +46,6 @@ class App extends Component {
     })
   }
   render() {
-
     // if (this.props.data.loading) {
     //   return <div>Loading</div>
     // }
@@ -50,25 +54,35 @@ class App extends Component {
         <div className="App">
           <header className="App-header">
             <img src={yoga} className="App-logo" alt="logo" />
-            <h1 className="App-title">Welcome to <code>graphql-yoga</code></h1>
-            {
-              this.state.isLoggedIn
-                ? <button onClick={this.logout}>Logout</button>
-                : <button onClick={this.login}>Login</button>
-            }
+            <h1 className="App-title">
+              Welcome to <code>graphql-yoga</code>
+            </h1>
+            {this.state.isLoggedIn ? (
+              <button onClick={this.logout}>Logout</button>
+            ) : (
+              <button onClick={this.login}>Login</button>
+            )}
           </header>
-          <Route exact path="/" render={() => (
-            <div className="App-intro">
-              <h3>Test</h3>
-              <Link to="/callback">Callback</Link>
-            </div>
-          )} />
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <div className="App-intro">
+                <h3>Test</h3>
+                <Link to="/callback">Callback</Link>
+              </div>
+            )}
+          />
           <Route exact path="/error" component={ErrorComponent} />
           <Switch>
             {this.state.isLoggedIn && (
               <Route exact path="/callback" component={Callback} />
             )}
-            <Route exact path="/:anythingElse" render={() => <Redirect to="/error" />} />
+            <Route
+              exact
+              path="/:anythingElse"
+              render={() => <Redirect to="/error" />}
+            />
           </Switch>
         </div>
       </Router>
