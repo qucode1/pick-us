@@ -8,6 +8,8 @@ create .env in server dir with the following variables:
 
 - PORT: Server Port
 - ENGINEKEY: Your Apollo Engine API Key
+- MONGO_URL: mongodb Link
+- AUTH0: Auth0 Endpoint <example.auth0.com>
 
 ## Start
 

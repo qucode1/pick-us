@@ -3,6 +3,10 @@ require("dotenv").config()
 const { GraphQLServer } = require('graphql-yoga')
 const { Engine } = require('apollo-engine')
 const compression = require('compression')
+const jwt = require('jsonwebtoken')
+
+// const privateKey = process.env.PRIVATEUSERKEY
+const publicKey = process.env.PUBLICUSERKEY
 
 const sampleItems = [
   { name: 'Apple' },
@@ -11,21 +15,8 @@ const sampleItems = [
   { name: 'Melon' },
 ]
 
-const typeDefs = `
-  type Query {
-    items: [Item!]!
-  }
-
-  type Item {
-    name: String!
-  }
-`
-
-const resolvers = {
-  Query: {
-    items: () => sampleItems,
-  },
-}
+const typeDefs = require('./data/schema')
+const resolvers = require('./data/resolvers')
 
 const options = {
   port: parseInt(process.env.PORT, 10) || 4000,
@@ -40,11 +31,18 @@ const options = {
   }
 }
 
-const context = async ({ request }) => {
-  return {
-    accessToken: request.headers.access_token || "",
-    profileToken: request.headers.profile_token || ""
+const context = async ({ request: { headers } }) => {
+  const ctx = {}
+  headers.access_token && (ctx.accessToken = headers.access_token)
+  if (headers.profile_token && headers.access_token) {
+    ctx.profileToken = headers.profile_token
+    try {
+      ctx.user = await jwt.verify(ctx.profile_token, publicKey)
+    } catch (err) {
+      console.error("ctx profileToken verification", err)
+    }
   }
+  return ctx
 }
 
 const server = new GraphQLServer({ typeDefs, resolvers, context })

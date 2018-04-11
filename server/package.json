@@ -6,6 +6,10 @@
     "apollo-engine": "0.9.1",
     "compression": "^1.7.2",
     "dotenv": "^5.0.1",
-    "graphql-yoga": "1.7.0"
+    "graphql-tools": "^2.23.1",
+    "graphql-yoga": "1.7.0",
+    "jsonwebtoken": "^8.2.1",
+    "jwks-rsa": "^1.2.1",
+    "mongoose": "^5.0.13"
   }
 }
