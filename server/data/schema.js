@@ -1,10 +1,10 @@
-const { makeExecutableSchema } = require('graphql-tools');
-const resolvers = require('./resolvers');
+const { makeExecutableSchema } = require("graphql-tools")
+const resolvers = require("./resolvers")
 
 const typeDefs = `
   type Query {
     me: Me
-    user(id: String, firstName: String, lastName: String, email: String, oAuth: String): User
+    user(id: String, firstName: String, lastName: String, email: String, auth0: String): User
     allUsers: [User]
     job(id: String): Job
     jobs(title: String, location: String): [Job]
@@ -17,7 +17,7 @@ const typeDefs = `
     firstName: String
     lastName: String
     email: String
-    oAuth: String
+    auth0: String
     role: String
     location: LocationRef
     profileToken: String
@@ -28,7 +28,7 @@ const typeDefs = `
     firstName: String
     lastName: String
     email: String
-    oAuth: String
+    auth0: String
     role: String
     location: LocationRef
   }
@@ -79,8 +79,8 @@ const typeDefs = `
     createUser(input: UserInput!, location: LocationInput!): User
     createJob(input: JobInput!, locations: [LocationInput!]!): Job
   }
-`;
+`
 
-const schema = makeExecutableSchema({ typeDefs, resolvers });
+const schema = makeExecutableSchema({ typeDefs, resolvers })
 
-module.exports = typeDefs;
+module.exports = typeDefs

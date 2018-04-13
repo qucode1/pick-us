@@ -27,20 +27,25 @@ const lock = new Auth0Lock(
 
 lock.on("authenticated", authResult => {
   // console.log(authResult);
-  lock.getUserInfo(authResult.accessToken, (err, profile) => {
-    if (err) console.error(err)
-    console.log(profile)
-    localStorage.setItem("idToken", authResult.idToken)
-    localStorage.setItem("accessToken", authResult.accessToken)
-  })
+  // lock.getUserInfo(authResult.accessToken, (err, profile) => {
+  // if (err) console.error(err)
+  // console.log("auth on authenticated profile", profile)
+  // localStorage.setItem("idToken", authResult.idToken)
+  // localStorage.setItem("accessToken", authResult.accessToken)
+  clearLocalStorageFromNonce()
+  // })
 })
 
-lock.on("authorization_error", err => {
+lock.on("authorization_error", () => {
+  clearLocalStorageFromNonce()
+})
+
+const clearLocalStorageFromNonce = () => {
   const search = "com.auth0.auth."
   Object.keys(localStorage)
     .filter(key => key.startsWith(search))
     .forEach(match => localStorage.removeItem(match))
-})
+}
 
 export const loginUser = lock => {
   lock.show()

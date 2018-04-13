@@ -2,19 +2,19 @@ import React, { Component, Fragment } from "react"
 import {
   BrowserRouter as Router,
   Route,
-  Link,
   Redirect,
   withRouter,
   Switch
 } from "react-router-dom"
 import yoga from "./yoga.png"
 import "./App.css"
-// import gql from 'graphql-tag'
-// import { graphql } from 'react-apollo'
 import Lock, { loginUser, logoutUser } from "./utils/auth"
 
 import Callback from "./Callback"
+import Dashboard from "./Dashboard"
+import Landing from "./Landing"
 import ErrorComponent from "./Error"
+import { ErrorContext } from "./utils/contextProvider"
 
 class App extends Component {
   constructor(props) {
@@ -33,10 +33,17 @@ class App extends Component {
   login() {
     loginUser(Lock)
     Lock.on("authenticated", authResult => {
-      this.setState({
-        isLoggedIn: true
+      console.log("login authResult", authResult)
+      Lock.getUserInfo(authResult.accessToken, (err, profile) => {
+        if (err) console.error(err)
+        // console.log("login authenticated profile", profile)
+        localStorage.setItem("idToken", authResult.idToken)
+        localStorage.setItem("accessToken", authResult.accessToken)
+        this.setState({
+          isLoggedIn: true
+        })
+        this.props.history.push("/")
       })
-      this.props.history.push("/")
     })
   }
   logout() {
@@ -44,13 +51,12 @@ class App extends Component {
     this.setState({
       isLoggedIn: false
     })
+    this.props.history.push("/")
   }
   render() {
-    // if (this.props.data.loading) {
-    //   return <div>Loading</div>
-    // }
     return (
       <Router>
+        {/* <ErrorContext.Provider> */}
         <div className="App">
           <header className="App-header">
             <img src={yoga} className="App-logo" alt="logo" />
@@ -66,12 +72,7 @@ class App extends Component {
           <Route
             exact
             path="/"
-            render={() => (
-              <div className="App-intro">
-                <h3>Test</h3>
-                <Link to="/callback">Callback</Link>
-              </div>
-            )}
+            component={this.state.isLoggedIn ? Dashboard : Landing}
           />
           <Route exact path="/error" component={ErrorComponent} />
           <Switch>
@@ -81,10 +82,13 @@ class App extends Component {
             <Route
               exact
               path="/:anythingElse"
-              render={() => <Redirect to="/error" />}
+              render={() => (
+                <ErrorComponent err="There's nothing to see here :(" />
+              )}
             />
           </Switch>
         </div>
+        {/* </ErrorContext.Provider> */}
       </Router>
     )
   }

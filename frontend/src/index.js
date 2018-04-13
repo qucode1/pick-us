@@ -16,11 +16,11 @@ const client = new ApolloClient({
     useGETForQueries: true
   },
   request: async operation => {
-    const accessToken = localStorage.getItem("accessToken")
+    const idToken = localStorage.getItem("idToken")
     const profileToken = localStorage.getItem("profileToken")
     operation.setContext({
       headers: {
-        access_token: accessToken || "",
+        id_token: idToken || "",
         profile_token: profileToken || ""
       }
     })
