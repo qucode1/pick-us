@@ -1,6 +1,7 @@
 import React, { Fragment } from "react"
 import { Query } from "react-apollo"
 import gql from "graphql-tag"
+import { Link } from "react-router-dom"
 
 import { ErrorContext } from "./utils/contextProvider"
 
@@ -20,8 +21,21 @@ const Dashboard = () => {
       {({ loading, error, data }) => {
         if (loading) return "Loading..."
         if (error) {
-          console.error(error)
-          return `${error.message}`
+          return (
+            <Fragment>
+              {error.graphQLErrors.map(error => (
+                <Fragment key={error.time_thrown}>
+                  <h3>
+                    {error.data.code}: {error.name}
+                  </h3>
+                  <h4>{error.message}</h4>
+                  {error.data.code === 404 && (
+                    <Link to="/profile">Edit Profile</Link>
+                  )}
+                </Fragment>
+              ))}
+            </Fragment>
+          )
         }
         return (
           <Fragment>

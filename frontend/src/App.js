@@ -12,6 +12,7 @@ import Lock, { loginUser, logoutUser } from "./utils/auth"
 
 import Callback from "./Callback"
 import Dashboard from "./Dashboard"
+import Profile from "./Profile"
 import Landing from "./Landing"
 import ErrorComponent from "./Error"
 import { ErrorContext } from "./utils/contextProvider"
@@ -77,7 +78,10 @@ class App extends Component {
           <Route exact path="/error" component={ErrorComponent} />
           <Switch>
             {this.state.isLoggedIn && (
-              <Route exact path="/callback" component={Callback} />
+              <Fragment>
+                <Route exact path="/callback" component={Callback} />
+                <Route exact path="/profile" component={Profile} />
+              </Fragment>
             )}
             <Route
               exact

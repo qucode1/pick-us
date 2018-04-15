@@ -4,6 +4,11 @@ var jwt = require("jsonwebtoken")
 const jwksRsa = require("jwks-rsa")
 const { GraphQLError } = require("graphql")
 const { promisify } = require("util")
+const {
+  CustomError,
+  NoUserDataError,
+  AuthenticationError
+} = require("../utils/customErrors")
 
 const privateProfileKey = process.env.PRIVATE_KEY
 const publicProfileKey = process.env.PUBLIC_KEY
@@ -97,20 +102,23 @@ const resolvers = {
         // return auth ? user : new Error("You are not authenticated")
 
         if (!idToken) {
-          const e = new Error("Your login data is invalid!")
-          e.name = "401, Unauthorized"
+          const e = new AuthenticationError()
           return e
         }
 
         // console.log("resolver ctx user", user)
         // console.log("resolver ctx idToken", idToken)
         // console.log("resolver ctx profileToken", profileToken)
-        const e = new Error("Please complete your profile first!")
-        e.name = "404, User Not Found"
+        const e = new NoUserDataError()
         return user || e
       } catch (err) {
-        const e = new Error(err.message)
-        e.name = "400, Bad Request"
+        const e = new CustomError({
+          message: "me query resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
         console.error("me resolver catched error", err)
         return e
       }

@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "apollo-engine": "0.9.1",
+    "apollo-errors": "^1.8.0",
     "compression": "^1.7.2",
     "dotenv": "^5.0.1",
     "graphql-tools": "^2.23.1",

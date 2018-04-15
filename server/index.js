@@ -4,6 +4,7 @@ const { Engine } = require("apollo-engine")
 const compression = require("compression")
 const jwt = require("jsonwebtoken")
 const jwksRsa = require("jwks-rsa")
+const { formatError } = require("apollo-errors")
 
 const {
   verifyIdToken,
@@ -29,12 +30,7 @@ const options = {
   endpoint: "/graphql",
   tracing: true,
   cacheControl: true,
-  formatError: error => {
-    return {
-      name: error.name,
-      message: error.message
-    }
-  }
+  formatError
 }
 
 const context = async ({ request: { headers } }) => {
