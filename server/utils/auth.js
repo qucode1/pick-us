@@ -9,7 +9,9 @@ const privateUserKey = process.env.PRIVATEUSERKEY
 exports.verifyIdToken = async token => {
   try {
     // console.log("verifyIdToken token", token)
-    const { header: { kid } } = await jwt.decode(token, { complete: true })
+    const {
+      header: { kid }
+    } = await jwt.decode(token, { complete: true })
     // console.log("verifyIdToken kid", kid)
     const client = jwksRsa({
       cache: true,
@@ -37,7 +39,7 @@ exports.verifyIdToken = async token => {
 exports.findUserByAuthSub = async sub => {
   try {
     // console.log("findUserByAuthSub start")
-    const user = await User.findOne({ auth0: sub })
+    const user = await User.findOne({ auth0: sub }).lean()
     // console.log("findUserByAuthSub findOne", user)
     return user
   } catch (err) {

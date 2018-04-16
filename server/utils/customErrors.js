@@ -23,6 +23,18 @@ exports.AuthorizationError = createError("Not Authorized", {
   }
 })
 
+exports.DuplicateUserError = createError("Duplicate Email", {
+  message:
+    "We found another user with your email." +
+    "This should only happen if you applied manually before and we " +
+    "added your profile to our database. Please confirm the phone number " +
+    "you applied with, to receive a verification email. If you have" +
+    "have never applied before, contact us",
+  data: {
+    code: 409
+  }
+})
+
 exports.CustomError = createError("Custom Error", {
   message: "Custom Error"
 })

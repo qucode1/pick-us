@@ -24,12 +24,14 @@ const Dashboard = () => {
       {({ loading, error, data }) => {
         if (loading) return "Loading..."
         if (error) {
-          <Fragment>
-            <ErrorContext.Consumer>
-              {({ setError }) => error}
-            </ErrorContext.Consumer>
-            <Redirect to="/error" />
-          </Fragment>
+          return (
+            <Fragment>
+              <ErrorContext.Consumer>
+                {({ setError }) => error}
+              </ErrorContext.Consumer>
+              <Redirect to="/error" />
+            </Fragment>
+          )
         }
         return <Redirect to="/" />
       }}

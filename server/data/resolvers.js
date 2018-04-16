@@ -7,46 +7,13 @@ const { promisify } = require("util")
 const {
   CustomError,
   NoUserDataError,
-  AuthenticationError
+  AuthenticationError,
+  AuthorizationError,
+  DuplicateUserError
 } = require("../utils/customErrors")
 
-const privateProfileKey = process.env.PRIVATE_KEY
-const publicProfileKey = process.env.PUBLIC_KEY
-
-// const isAuthenticated = async (accessToken) => {
-//     try {
-//         if (!accessToken) return false
-//         const { header: { kid } } = await jwt.decode(accessToken, { complete: true })
-//         const client = jwksRsa({
-//             cache: true,
-//             rateLimit: true,
-//             jwksRequestsPerMinute: 10,
-//             jwksUri: `${process.env.AUTH0}/.well-known/jwks.json`
-//         })
-//         const getSigningKey = promisify(client.getSigningKey)
-//         const { publicKey, rsaPublicKey } = await getSigningKey(kid)
-
-//         const decoded = jwt.verify(accessToken, (publicKey || rsaPublicKey), {
-//             audience: `${process.env.AUTH0}/api/v2/`,
-//             issuer: `${process.env.AUTH0}/`,
-//             algorithms: ['RS256']
-//         })
-//         return decoded
-//     } catch (err) {
-//         console.error("isAuthenticated catched error", err)
-//         return false
-//     }
-// }
-
-// isUser = async (sub, profileToken) => {
-//     try {
-//         const user = await jwt.verify(profileToken, publicProfileKey)
-//         return (user && user.oAuth === sub) ? user : false
-//     } catch (err) {
-//         console.error("isUser catched error", err)
-//         return false
-//     }
-// }
+const privateProfileKey = process.env.PRIVATEUSERKEY
+const publicProfileKey = process.env.PUBLICUSERKEY
 
 // isAdmin = user => user ? user.role === "admin" : false
 
@@ -109,8 +76,35 @@ const resolvers = {
         // console.log("resolver ctx user", user)
         // console.log("resolver ctx idToken", idToken)
         // console.log("resolver ctx profileToken", profileToken)
-        const e = new NoUserDataError()
-        return user || e
+        if (!profileToken) {
+          const newUser = new User({
+            id: new mongoose.Types.ObjectId(),
+            auth0: user.auth0,
+            email: user.email
+          })
+          const duplicateUser = await User.findOne({
+            email: user.email,
+            role: { $exists: false }
+          })
+          if (duplicateUser) {
+            newUser.role = "tempUser"
+            await newUser.save()
+            return new DuplicateUserError({
+              data: {
+                user: newUser
+              }
+            })
+          }
+          newUser.role = "newUser"
+          await newUser.save()
+          return new NoUserDataError({
+            data: {
+              user: newUser
+            }
+          })
+        }
+
+        return user
       } catch (err) {
         const e = new CustomError({
           message: "me query resolver error",
@@ -198,21 +192,8 @@ const resolvers = {
     id(user) {
       return user._id
     },
-    profileToken(user) {
-      return jwt.sign(
-        {
-          id: user._id,
-          oAuth: user.oAuth,
-          role: user.role
-        },
-        privateProfileKey,
-        {
-          expiresIn: "6H",
-          subject: user.oAuth,
-          issuer: "JobCMSGraphql",
-          algorithm: "RS256"
-        }
-      )
+    profileToken(user, args, { profileToken }) {
+      return profileToken
     },
     publicKey() {
       return publicProfileKey
@@ -240,32 +221,38 @@ const resolvers = {
   //     }
   // },
   Mutation: {
-    // async createUser(_, { input, location }, { accessToken, profileToken }) {
-    //     try {
-    //         const auth = await isAuthenticated(accessToken)
-    //         if (!auth) return new Error("You are not authenticated")
-    //         const userProfile = await isUser(auth.sub, profileToken)
-    //         if (userProfile && isAdmin(userProfile)) {
-    //             const user = new User({
-    //                 _id: new mongoose.Types.ObjectId(),
-    //                 ...input
-    //             })
-    //             const userLocation = await new Location({
-    //                 category: "user",
-    //                 user: user._id,
-    //                 loc: location
-    //             }).save()
-    //             user.location = {
-    //                 address: userLocation.loc.address,
-    //                 data: userLocation._id
-    //             }
-    //             return await user.save()
-    //         } else return new Error("You are not authorized to do this.")
-    //     } catch (err) {
-    //         console.error("createUser mutation catched error", err);
-    //         return new Error(err.message)
-    //     }
-    // },
+    async createUser(_, { input, location }, { idToken, profileToken, user }) {
+      try {
+        if (!idToken) return new AuthenticationError()
+        // check for profileToken instead of user,
+        // since user will always have at least email and auth0 as
+        // long as there is an idToken
+        if ((profileToken && isAdmin(user)) || !profileToken) {
+          const user = new User({
+            _id: new mongoose.Types.ObjectId(),
+            ...input
+          })
+          // const userLocation = await new Location({
+          //     category: "user",
+          //     user: user._id,
+          //     loc: location
+          // }).save()
+          // user.location = {
+          //     address: userLocation.loc.address,
+          //     data: userLocation._id
+          // }
+          return await user.save()
+        } else return new AuthorizationError()
+      } catch (err) {
+        console.error("createUser mutation catched error", err)
+        return new CustomError({
+          message: "createUser mutation resolver error",
+          data: {
+            error: err
+          }
+        })
+      }
+    }
     // async createJob(_, { input, locations }, ctx) {
     //     try {
     //         const auth = await isAuthenticated(accessToken)

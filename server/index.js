@@ -15,13 +15,6 @@ const {
 // const privateKey = process.env.PRIVATEUSERKEY
 const publicKey = process.env.PUBLICUSERKEY
 
-const sampleItems = [
-  { name: "Apple" },
-  { name: "Banana" },
-  { name: "Orange" },
-  { name: "Melon" }
-]
-
 const typeDefs = require("./data/schema")
 const resolvers = require("./data/resolvers")
 
@@ -38,7 +31,12 @@ const context = async ({ request: { headers } }) => {
   if (headers.id_token && !headers.profile_token) {
     try {
       const decoded = await verifyIdToken(headers.id_token)
-      decoded && (ctx.idToken = headers.id_token)
+      decoded &&
+        ((ctx.idToken = headers.id_token),
+        (ctx.user = {
+          auth0: decoded.sub,
+          email: decoded.email
+        }))
       const user = await findUserByAuthSub(decoded.sub)
       if (user) {
         const profileToken = await createProfileToken(user, decoded)
@@ -51,7 +49,7 @@ const context = async ({ request: { headers } }) => {
     ctx.idToken = headers.id_token
     ctx.profileToken = headers.profile_token
     try {
-      ctx.user = await jwt.verify(ctx.profile_token, publicKey)
+      ctx.user = await jwt.verify(ctx.profileToken, publicKey)
     } catch (err) {
       console.error("setting context for logged in user", err)
     }

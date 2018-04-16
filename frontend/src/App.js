@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react"
 import {
   BrowserRouter as Router,
   Route,
-  Redirect,
   withRouter,
   Switch
 } from "react-router-dom"
@@ -15,7 +14,7 @@ import Dashboard from "./Dashboard"
 import Profile from "./Profile"
 import Landing from "./Landing"
 import ErrorComponent from "./Error"
-import { ErrorContext } from "./utils/contextProvider"
+// import { ErrorContext } from "./utils/contextProvider"
 
 class App extends Component {
   constructor(props) {

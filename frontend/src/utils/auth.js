@@ -53,6 +53,7 @@ export const loginUser = lock => {
 export const logoutUser = () => {
   localStorage.removeItem("accessToken")
   localStorage.removeItem("idToken")
+  localStorage.removeItem("profileToken")
 }
 
 export default lock

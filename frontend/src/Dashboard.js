@@ -3,14 +3,13 @@ import { Query } from "react-apollo"
 import gql from "graphql-tag"
 import { Link } from "react-router-dom"
 
-import { ErrorContext } from "./utils/contextProvider"
-
 const ME = gql`
   {
     me {
-      firstName
+      profileToken
       email
       auth0
+      role
     }
   }
 `
@@ -37,10 +36,10 @@ const Dashboard = () => {
             </Fragment>
           )
         }
+        localStorage.setItem("profileToken", data.me.profileToken)
         return (
           <Fragment>
             <h2>Dashboard Component</h2>
-            <h3>{data.me.firstName}</h3>
             <h4>{data.me.email}</h4>
             <h4>{data.me.auth0}</h4>
           </Fragment>
