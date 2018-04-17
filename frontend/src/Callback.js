@@ -6,7 +6,7 @@ import { Query } from "react-apollo"
 import { Redirect } from "react-router-dom"
 import gql from "graphql-tag"
 
-import { ErrorContext } from "./utils/contextProvider"
+import { MyContext } from "./utils/contextProvider"
 
 const ME = gql`
   {
@@ -25,15 +25,12 @@ const Dashboard = () => {
         if (loading) return "Loading..."
         if (error) {
           return (
-            <Fragment>
-              <ErrorContext.Consumer>
-                {({ setError }) => error}
-              </ErrorContext.Consumer>
-              <Redirect to="/error" />
-            </Fragment>
+            <MyContext.Consumer>
+              {({ setError }) => (setError(error), <Redirect to="/error" />)}
+            </MyContext.Consumer>
           )
         }
-        return <Redirect to="/" />
+        return <h3>Dashboard</h3>
       }}
     </Query>
   )

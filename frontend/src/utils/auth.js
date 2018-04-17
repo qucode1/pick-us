@@ -36,7 +36,23 @@ lock.on("authenticated", authResult => {
   // })
 })
 
-lock.on("authorization_error", () => {
+lock.on("authorization_error", error => {
+  lock.show({
+    flashMessage: {
+      type: "error",
+      text: error.error_description
+    }
+  })
+  clearLocalStorageFromNonce()
+})
+
+lock.on("unrecoverable_error", error => {
+  lock.show({
+    flashMessage: {
+      type: "error",
+      text: error.error_description
+    }
+  })
   clearLocalStorageFromNonce()
 })
 

@@ -1,7 +1,9 @@
 import React, { Fragment } from "react"
 import { Query } from "react-apollo"
 import gql from "graphql-tag"
-import { Link } from "react-router-dom"
+import { Link, Redirect } from "react-router-dom"
+
+import { MyContext } from "./utils/contextProvider"
 
 const ME = gql`
   {
@@ -22,7 +24,18 @@ const Dashboard = () => {
         if (error) {
           return (
             <Fragment>
-              {error.graphQLErrors.map(error => (
+              <MyContext.Consumer>
+                {context => {
+                  return (
+                    <Fragment>
+                      {context.setError(error)}
+                      {console.log("Dashboard error - redirect to /error")}
+                      <Redirect push to="/error" />
+                    </Fragment>
+                  )
+                }}
+              </MyContext.Consumer>
+              {/* {error.graphQLErrors.map(error => (
                 <Fragment key={error.time_thrown}>
                   <h3>
                     {error.data.code}: {error.name}
@@ -32,7 +45,7 @@ const Dashboard = () => {
                     <Link to="/profile">Edit Profile</Link>
                   )}
                 </Fragment>
-              ))}
+              ))} */}
             </Fragment>
           )
         }

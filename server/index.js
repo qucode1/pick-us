@@ -41,6 +41,7 @@ const context = async ({ request: { headers } }) => {
       if (user) {
         const profileToken = await createProfileToken(user, decoded)
         ctx.profileToken = profileToken
+        ctx.user = user
       }
     } catch (err) {
       console.error("setting context on first login", err)

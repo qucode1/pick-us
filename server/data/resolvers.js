@@ -77,6 +77,7 @@ const resolvers = {
         // console.log("resolver ctx idToken", idToken)
         // console.log("resolver ctx profileToken", profileToken)
         if (!profileToken) {
+          console.log("me resolver ctx.user no profileToken")
           const newUser = new User({
             id: new mongoose.Types.ObjectId(),
             auth0: user.auth0,
@@ -103,7 +104,18 @@ const resolvers = {
             }
           })
         }
-
+        if (user.role === "newUser")
+          return new NoUserDataError({
+            data: {
+              user
+            }
+          })
+        if (user.role === "tempUser")
+          return new NoUserDataError({
+            data: {
+              user
+            }
+          })
         return user
       } catch (err) {
         const e = new CustomError({

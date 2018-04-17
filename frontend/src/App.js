@@ -1,33 +1,38 @@
 import React, { Component, Fragment } from "react"
-import {
-  BrowserRouter as Router,
-  Route,
-  withRouter,
-  Switch
-} from "react-router-dom"
+import { Route, withRouter, Switch } from "react-router-dom"
 import yoga from "./yoga.png"
 import "./App.css"
 import Lock, { loginUser, logoutUser } from "./utils/auth"
+import { withApollo } from "react-apollo"
+import { MyContext } from "./utils/contextProvider"
+import PrivateRoute from "./utils/PrivateRoute"
 
 import Callback from "./Callback"
 import Dashboard from "./Dashboard"
 import Profile from "./Profile"
 import Landing from "./Landing"
 import ErrorComponent from "./Error"
-// import { ErrorContext } from "./utils/contextProvider"
+import Redirect from "react-router-dom/Redirect"
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isLoggedIn: false
+      isLoggedIn: false,
+      error: null
     }
     this.login = this.login.bind(this)
     this.logout = this.logout.bind(this)
+    this.setError = this.setError.bind(this)
   }
   componentDidMount() {
     this.setState({
       isLoggedIn: !!localStorage.getItem("idToken")
+    })
+  }
+  setError(e) {
+    this.setState({
+      error: e
     })
   }
   login() {
@@ -51,12 +56,17 @@ class App extends Component {
     this.setState({
       isLoggedIn: false
     })
+    this.props.client.resetStore()
     this.props.history.push("/")
   }
   render() {
     return (
-      <Router>
-        {/* <ErrorContext.Provider> */}
+      <MyContext.Provider
+        value={{
+          state: this.state,
+          setError: this.setError
+        }}
+      >
         <div className="App">
           <header className="App-header">
             <img src={yoga} className="App-logo" alt="logo" />
@@ -74,27 +84,23 @@ class App extends Component {
             path="/"
             component={this.state.isLoggedIn ? Dashboard : Landing}
           />
-          <Route exact path="/error" component={ErrorComponent} />
           <Switch>
-            {this.state.isLoggedIn && (
-              <Fragment>
-                <Route exact path="/callback" component={Callback} />
-                <Route exact path="/profile" component={Profile} />
-              </Fragment>
-            )}
+            <PrivateRoute exact path="/profile" component={Profile} />
+            <PrivateRoute exact path="/callback" component={Callback} />
+            <Route exact path="/error" component={ErrorComponent} />
             <Route
               exact
               path="/:anythingElse"
               render={() => (
-                <ErrorComponent err="There's nothing to see here :(" />
+                this.setError({ message: "There is nothing to see here :(" }),
+                <Redirect to="/error" />
               )}
             />
           </Switch>
         </div>
-        {/* </ErrorContext.Provider> */}
-      </Router>
+      </MyContext.Provider>
     )
   }
 }
 
-export default withRouter(App)
+export default withApollo(withRouter(App))
