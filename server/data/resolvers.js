@@ -12,6 +12,8 @@ const {
   DuplicateUserError
 } = require("../utils/customErrors")
 
+const { getMessageList } = require("../utils/gmail")
+
 const privateProfileKey = process.env.PRIVATEUSERKEY
 const publicProfileKey = process.env.PUBLICUSERKEY
 
@@ -127,6 +129,16 @@ const resolvers = {
         })
         console.error("me resolver catched error", err)
         return e
+      }
+    },
+    async emails(_, args, ctx) {
+      try {
+        const messages = await getMessageList()
+        console.log("emails resolver", messages.data.messages)
+        return "success"
+      } catch (err) {
+        console.error("emails resolver", err)
+        return "Failure"
       }
     }
     // async user(_, args, { accessToken, profileToken }) {

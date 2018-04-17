@@ -11,6 +11,7 @@ const typeDefs = `
     allJobs: [Job]
     nearbyJobs(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyJob]
     nearbyUsers(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyUser]
+    emails: String
   }
   type Me {
     id: String
