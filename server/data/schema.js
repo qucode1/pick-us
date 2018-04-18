@@ -12,7 +12,12 @@ const typeDefs = `
     nearbyJobs(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyJob]
     nearbyUsers(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyUser]
     emails: String
+    sendEmail: sendEmailResponse
   }
+  type sendEmailResponse {
+    status: Int,
+    statusText: String
+  } 
   type Me {
     id: String
     firstName: String
