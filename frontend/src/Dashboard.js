@@ -8,7 +8,10 @@ import { MyContext } from "./utils/contextProvider"
 const ME = gql`
   {
     me {
+      id
       profileToken
+      firstName
+      lastName
       email
       auth0
       role
@@ -21,7 +24,7 @@ const Dashboard = () => {
     <Query query={ME}>
       {({ loading, error, data }) => {
         if (loading) return "Loading..."
-        if (error) {
+        else if (error) {
           return (
             <Fragment>
               <MyContext.Consumer>
@@ -29,34 +32,33 @@ const Dashboard = () => {
                   return (
                     <Fragment>
                       {context.setError(error)}
-                      {console.log("Dashboard error - redirect to /error")}
-                      <Redirect push to="/error" />
+                      <Redirect to="/error" />
                     </Fragment>
                   )
                 }}
               </MyContext.Consumer>
-              {/* {error.graphQLErrors.map(error => (
-                <Fragment key={error.time_thrown}>
-                  <h3>
-                    {error.data.code}: {error.name}
-                  </h3>
-                  <h4>{error.message}</h4>
-                  {error.data.code === 404 && (
-                    <Link to="/profile">Edit Profile</Link>
-                  )}
-                </Fragment>
-              ))} */}
             </Fragment>
           )
+        } else {
+          let response
+          localStorage.setItem("profileToken", data.me.profileToken)
+          if (data.me.role === "tempUser" || data.me.role === "newUser") {
+            response = <Redirect to="/profile" />
+          } else
+            response = (
+              <Fragment>
+                <h2>Dashboard Component</h2>
+                <h4>
+                  {data.me.firstName} {data.me.lastName}
+                </h4>
+                <h4>{data.me.email}</h4>
+                <h4>{data.me.role}</h4>
+                <h4>{data.me.auth0}</h4>
+                <Link to="/profile">Profile</Link>
+              </Fragment>
+            )
+          return response
         }
-        localStorage.setItem("profileToken", data.me.profileToken)
-        return (
-          <Fragment>
-            <h2>Dashboard Component</h2>
-            <h4>{data.me.email}</h4>
-            <h4>{data.me.auth0}</h4>
-          </Fragment>
-        )
       }}
     </Query>
   )

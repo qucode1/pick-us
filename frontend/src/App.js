@@ -36,18 +36,21 @@ class App extends Component {
     })
   }
   login() {
+    // this.props.history.push("/login")
     loginUser(Lock)
     Lock.on("authenticated", authResult => {
       console.log("login authResult", authResult)
       Lock.getUserInfo(authResult.accessToken, (err, profile) => {
-        if (err) console.error(err)
+        if (err) console.error("App.login", err)
         // console.log("login authenticated profile", profile)
         localStorage.setItem("idToken", authResult.idToken)
         localStorage.setItem("accessToken", authResult.accessToken)
-        this.setState({
-          isLoggedIn: true
-        })
-        this.props.history.push("/")
+        this.setState(
+          () => ({
+            isLoggedIn: true
+          }),
+          this.props.history.push("/")
+        )
       })
     })
   }
@@ -57,7 +60,7 @@ class App extends Component {
       isLoggedIn: false
     })
     this.props.client.resetStore()
-    this.props.history.push("/")
+    this.props.history.push("/logout")
   }
   render() {
     return (
@@ -90,6 +93,12 @@ class App extends Component {
             <Route exact path="/error" component={ErrorComponent} />
             <Route
               exact
+              path="/login"
+              render={() => <Login login={this.login} />}
+            />
+            <Route exact path="/logout" render={() => <Redirect to="/" />} />
+            <Route
+              exact
               path="/:anythingElse"
               render={() => (
                 this.setError({ message: "There is nothing to see here :(" }),
@@ -100,6 +109,15 @@ class App extends Component {
         </div>
       </MyContext.Provider>
     )
+  }
+}
+
+class Login extends Component {
+  componentDidMount() {
+    this.props.login()
+  }
+  render() {
+    return <p>Logging in...</p>
   }
 }
 

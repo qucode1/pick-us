@@ -9,7 +9,7 @@ exports.NoUserDataError = createError("No User Data", {
   }
 })
 
-exports.AuthenticationError = createError("Not Logged in", {
+exports.AuthenticationError = createError("Not Logged In", {
   message: "You need to be logged to access this. Please log in first",
   data: {
     code: 401

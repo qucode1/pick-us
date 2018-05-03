@@ -17,7 +17,7 @@ const { getMessageList, sendMessage } = require("../utils/gmail")
 const privateProfileKey = process.env.PRIVATEUSERKEY
 const publicProfileKey = process.env.PUBLICUSERKEY
 
-// isAdmin = user => user ? user.role === "admin" : false
+isAdmin = user => (user ? user.role === "admin" : false)
 
 // const aggregateLocations = (collection, lng, lat, distance, order) => {
 //     let collectionSingular = collection
@@ -65,11 +65,6 @@ const resolvers = {
   Query: {
     async me(_, args, { user, idToken, profileToken }) {
       try {
-        // const auth = await isAuthenticated(accessToken)
-        // const user = await User.findOne({ oAuth: auth.sub }) ||
-        //     new Error("Welcome. We do not know anything about you yet. Please add your profile information.")
-        // return auth ? user : new Error("You are not authenticated")
-
         if (!idToken) {
           const e = new AuthenticationError()
           return e
@@ -78,7 +73,7 @@ const resolvers = {
         // console.log("resolver ctx user", user)
         // console.log("resolver ctx idToken", idToken)
         // console.log("resolver ctx profileToken", profileToken)
-        if (!profileToken) {
+        else if (!profileToken) {
           console.log("me resolver ctx.user no profileToken")
           const newUser = new User({
             id: new mongoose.Types.ObjectId(),
@@ -92,33 +87,12 @@ const resolvers = {
           if (duplicateUser) {
             newUser.role = "tempUser"
             await newUser.save()
-            return new DuplicateUserError({
-              data: {
-                user: newUser
-              }
-            })
+            return newUser
           }
           newUser.role = "newUser"
           await newUser.save()
-          return new NoUserDataError({
-            data: {
-              user: newUser
-            }
-          })
-        }
-        if (user.role === "newUser")
-          return new NoUserDataError({
-            data: {
-              user
-            }
-          })
-        if (user.role === "tempUser")
-          return new NoUserDataError({
-            data: {
-              user
-            }
-          })
-        return user
+          return newUser
+        } else return user
       } catch (err) {
         const e = new CustomError({
           message: "me query resolver error",
@@ -282,12 +256,37 @@ const resolvers = {
           // }
           return await user.save()
         } else return new AuthorizationError()
-      } catch (err) {
-        console.error("createUser mutation catched error", err)
+      } catch (error) {
+        console.error("createUser mutation catched error", error)
         return new CustomError({
           message: "createUser mutation resolver error",
           data: {
-            error: err
+            error
+          }
+        })
+      }
+    },
+    async updateMe(_, { input, location }, { user }) {
+      try {
+        console.log("updateMe mutation resolver, input:", input)
+        if (user && user._id) {
+          await User.findByIdAndUpdate(user._id, {
+            ...input,
+            auth0: user.auth0,
+            role:
+              ((user.role === "newUser" || user.role === "tempUser") &&
+                Object.entries(input).every(([key, value]) => !!value) &&
+                "user") ||
+              user.role
+          })
+          return await User.findOne({ _id: user._id })
+        } else return new AuthorizationError()
+      } catch (error) {
+        console.error(error)
+        return new CustomError({
+          message: "updateUser mutation resolver error",
+          data: {
+            error
           }
         })
       }

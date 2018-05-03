@@ -53,7 +53,7 @@ exports.createProfileToken = async (userData, auth0Payload) => {
     const token = await jwt.sign(userData, privateUserKey, {
       expiresIn: auth0Payload.exp,
       subject: userData.auth0,
-      issuer: "pick-us-graphql-api",
+      issuer: `${process.env.ISSUER}`,
       algorithm: "RS256"
     })
     // console.log("created ProfileToken", token)

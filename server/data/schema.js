@@ -83,6 +83,7 @@ const typeDefs = `
   }
   type Mutation {
     createUser(input: UserInput!, location: LocationInput!): User
+    updateMe(input: UserInput!, location: LocationInput): Me
     createJob(input: JobInput!, locations: [LocationInput!]!): Job
   }
 `

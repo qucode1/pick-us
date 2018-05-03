@@ -5,8 +5,6 @@ const lock = new Auth0Lock(
   "pick-us.eu.auth0.com",
   {
     language: "de",
-    // redirect: true,
-    // redirectUrl: 'http://localhost:3000',
     allowSignUp: false,
     autofocus: true,
     autocomplete: true,
@@ -19,6 +17,7 @@ const lock = new Auth0Lock(
     },
     auth: {
       redirect: false,
+      redirectUrl: "http://localhost:3000",
       responseType: "token id_token",
       sso: true
     }
