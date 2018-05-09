@@ -3,16 +3,16 @@
     "start": "node ."
   },
   "dependencies": {
-    "apollo-engine": "0.9.1",
-    "apollo-errors": "^1.8.0",
+    "apollo-engine": "^1.1.1",
+    "apollo-errors": "^1.9.0",
     "compression": "^1.7.2",
     "dotenv": "^5.0.1",
-    "googleapis": "^28.1.0",
-    "graphql-tools": "^2.23.1",
-    "graphql-yoga": "1.7.0",
+    "googleapis": "^30.0.0",
+    "graphql-tools": "^3.0.1",
+    "graphql-yoga": "^1.13.1",
     "js-base64": "^2.4.3",
     "jsonwebtoken": "^8.2.1",
     "jwks-rsa": "^1.2.1",
-    "mongoose": "^5.0.13"
+    "mongoose": "^5.0.17"
   }
 }

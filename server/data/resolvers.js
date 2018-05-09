@@ -65,15 +65,13 @@ const resolvers = {
   Query: {
     async me(_, args, { user, idToken, profileToken }) {
       try {
-        if (!idToken) {
-          const e = new AuthenticationError()
-          return e
-        }
-
         // console.log("resolver ctx user", user)
         // console.log("resolver ctx idToken", idToken)
         // console.log("resolver ctx profileToken", profileToken)
-        else if (!profileToken) {
+        if (!idToken) {
+          const e = new AuthenticationError()
+          return e
+        } else if (!profileToken) {
           console.log("me resolver ctx.user no profileToken")
           const newUser = new User({
             id: new mongoose.Types.ObjectId(),

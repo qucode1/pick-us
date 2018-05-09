@@ -14,6 +14,8 @@ import Landing from "./Landing"
 import ErrorComponent from "./Error"
 import Redirect from "react-router-dom/Redirect"
 
+import RaisedButton from "material-ui/RaisedButton" // add
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -54,7 +56,7 @@ class App extends Component {
       })
     })
   }
-  logout() {
+  logout = () => {
     logoutUser()
     this.setState({
       isLoggedIn: false
@@ -77,9 +79,9 @@ class App extends Component {
               Welcome to <code>graphql-yoga</code>
             </h1>
             {this.state.isLoggedIn ? (
-              <button onClick={this.logout}>Logout</button>
+              <RaisedButton onClick={this.logout}>Logout</RaisedButton>
             ) : (
-              <button onClick={this.login}>Login</button>
+              <RaisedButton onClick={this.login}>Login</RaisedButton>
             )}
           </header>
           <Route
@@ -100,10 +102,10 @@ class App extends Component {
             <Route
               exact
               path="/:anythingElse"
-              render={() => (
-                this.setError({ message: "There is nothing to see here :(" }),
-                <Redirect to="/error" />
-              )}
+              render={() => {
+                this.setError({ message: "There is nothing to see here :(" })
+                return <Redirect to="/error" />
+              }}
             />
           </Switch>
         </div>

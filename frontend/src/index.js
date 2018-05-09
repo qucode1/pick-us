@@ -7,13 +7,15 @@ import { BrowserRouter as Router } from "react-router-dom"
 
 import "./index.css"
 
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider" // add
+
 import App from "./App"
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
   fetchOptions: {
-    credentials: "include",
-    useGETForQueries: true
+    useGETForQueries: true,
+    credentials: "include"
   },
   request: async operation => {
     const idToken = localStorage.getItem("idToken")
@@ -29,9 +31,11 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <Router>
-      <App />
-    </Router>
+    <MuiThemeProvider>
+      <Router>
+        <App />
+      </Router>
+    </MuiThemeProvider>
   </ApolloProvider>,
   document.getElementById("root")
 )

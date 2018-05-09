@@ -1,31 +1,9 @@
 {
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
-  "parserOptions": {
-    "ecmaVersion": 2017,
-    "ecmaFeatures": {
-      "jsx": true,
-      "experimentalObjectRestSpread": true
-    },
-    "sourceType": "module"
-  },
-  "settings": {
-    "react": {
-      "createClass": "createReactClass",
-      "pragma": "React",
-      "version": "16.3"
-    },
-    "propWrapperFunctions": ["forbidExtraProps"]
-  },
-  "plugins": ["react", "import"],
-  "globals": {
-    "window": true,
-    "localStorage": true,
-    "document": true,
-    "console": true
-  },
+  "extends": ["react-app", "eslint:recommended", "plugin:react/recommended"],
   "rules": {
     "react/prop-types": [0],
     "no-unused-vars": [1],
-    "no-console": [1]
+    "no-console": [1],
+    "no-sequences": [0]
   }
 }

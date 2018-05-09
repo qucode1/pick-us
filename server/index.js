@@ -1,6 +1,6 @@
 require("dotenv").config()
 const { GraphQLServer } = require("graphql-yoga")
-const { Engine } = require("apollo-engine")
+const { ApolloEngine } = require("apollo-engine")
 const compression = require("compression")
 const jwt = require("jsonwebtoken")
 const jwksRsa = require("jwks-rsa")
@@ -14,6 +14,7 @@ const {
 
 // const privateKey = process.env.PRIVATEUSERKEY
 const publicKey = process.env.PUBLICUSERKEY
+const port = parseInt(process.env.PORT, 10) || 4000
 
 const typeDefs = require("./data/schema")
 const resolvers = require("./data/resolvers")
@@ -60,16 +61,25 @@ const context = async ({ request: { headers } }) => {
 
 const server = new GraphQLServer({ typeDefs, resolvers, context })
 
-const engine = new Engine({
-  engineConfig: { apiKey: process.env.ENGINEKEY },
-  endpoint: "/graphql",
-  graphqlPort: parseInt(process.env.PORT, 10) || 4000
+const engine = new ApolloEngine({
+  apiKey: process.env.ENGINEKEY
 })
-engine.start()
 
-server.express.use(compression())
-server.express.use(engine.expressMiddleware())
+const httpServer = server.createHttpServer({
+  tracing: true,
+  cacheControl: true,
+  formatError,
+  endpoint: "/graphql"
+})
 
-server.start(options, () =>
-  console.log("Server is running on localhost:" + options.port)
+engine.listen(
+  {
+    port,
+    httpServer,
+    graphqlPaths: ["/graphql"]
+  },
+  () =>
+    console.log(
+      `Server with Apollo Engine is running on http://localhost:${port}`
+    )
 )
