@@ -1,20 +1,19 @@
-import React, { Component, Fragment } from "react"
-import { Route, withRouter, Switch } from "react-router-dom"
-import yoga from "./yoga.png"
+import React, { Component } from "react"
+import { Route, Switch, Redirect, withRouter } from "react-router-dom"
+import gql from "graphql-tag"
+
 import "./App.css"
-import Lock, { loginUser, logoutUser } from "./utils/auth"
+import Lock, { loginUser, logoutUser } from "../../utils/auth"
 import { withApollo } from "react-apollo"
-import { MyContext } from "./utils/contextProvider"
-import PrivateRoute from "./utils/PrivateRoute"
+import { MyContext } from "../../utils/contextProvider"
+import PrivateRoute from "../../utils/PrivateRoute"
 
-import Callback from "./Callback"
-import Dashboard from "./Dashboard"
-import Profile from "./Profile"
-import Landing from "./Landing"
-import ErrorComponent from "./Error"
-import Redirect from "react-router-dom/Redirect"
-
-import RaisedButton from "material-ui/RaisedButton" // add
+import Callback from "../callback/Callback"
+import Dashboard from "../dashboard/Dashboard"
+import Profile from "../profile/Profile"
+import Landing from "../landing/Landing"
+import ErrorComponent from "../error/Error"
+import Header from "../header/Header"
 
 class App extends Component {
   constructor(props) {
@@ -23,7 +22,6 @@ class App extends Component {
       isLoggedIn: false,
       error: null
     }
-    this.login = this.login.bind(this)
     this.logout = this.logout.bind(this)
     this.setError = this.setError.bind(this)
   }
@@ -37,16 +35,35 @@ class App extends Component {
       error: e
     })
   }
-  login() {
+  login = async () => {
     // this.props.history.push("/login")
     loginUser(Lock)
     Lock.on("authenticated", authResult => {
       console.log("login authResult", authResult)
-      Lock.getUserInfo(authResult.accessToken, (err, profile) => {
+      Lock.getUserInfo(authResult.accessToken, async (err, profile) => {
         if (err) console.error("App.login", err)
         // console.log("login authenticated profile", profile)
         localStorage.setItem("idToken", authResult.idToken)
         localStorage.setItem("accessToken", authResult.accessToken)
+        await this.props.client.resetStore()
+        const {
+          data: { me: { profileToken } }
+        } = await this.props.client.query({
+          query: gql`
+            {
+              me {
+                id
+                profileToken
+                firstName
+                lastName
+                email
+                auth0
+                role
+              }
+            }
+          `
+        })
+        localStorage.setItem("profileToken", profileToken)
         this.setState(
           () => ({
             isLoggedIn: true
@@ -73,17 +90,11 @@ class App extends Component {
         }}
       >
         <div className="App">
-          <header className="App-header">
-            <img src={yoga} className="App-logo" alt="logo" />
-            <h1 className="App-title">
-              Welcome to <code>graphql-yoga</code>
-            </h1>
-            {this.state.isLoggedIn ? (
-              <RaisedButton onClick={this.logout}>Logout</RaisedButton>
-            ) : (
-              <RaisedButton onClick={this.login}>Login</RaisedButton>
-            )}
-          </header>
+          <Header
+            login={this.login}
+            logout={this.logout}
+            isLoggedIn={this.state.isLoggedIn}
+          />
           <Route
             exact
             path="/"

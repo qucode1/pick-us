@@ -1,7 +1,7 @@
 import React, { Fragment } from "react"
 import { Link, Redirect } from "react-router-dom"
 
-import { MyContext } from "./utils/contextProvider"
+import { MyContext } from "../../utils/contextProvider"
 
 const ErrorComponent = () => (
   <Fragment>

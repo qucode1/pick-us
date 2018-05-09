@@ -6,7 +6,7 @@ import { Query } from "react-apollo"
 import { Redirect } from "react-router-dom"
 import gql from "graphql-tag"
 
-import { MyContext } from "./utils/contextProvider"
+import { MyContext } from "../../utils/contextProvider"
 
 const ME = gql`
   {

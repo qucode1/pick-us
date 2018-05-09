@@ -8,8 +8,9 @@ import { BrowserRouter as Router } from "react-router-dom"
 import "./index.css"
 
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider" // add
+import { createMuiTheme } from "material-ui/styles"
 
-import App from "./App"
+import App from "./components/app/App"
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
@@ -29,9 +30,17 @@ const client = new ApolloClient({
   }
 })
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "rgb(46, 112, 185)"
+    }
+  }
+})
+
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <MuiThemeProvider>
+    <MuiThemeProvider theme={theme}>
       <Router>
         <App />
       </Router>

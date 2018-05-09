@@ -3,7 +3,7 @@ import { Link, Redirect } from "react-router-dom"
 import { Query, Mutation } from "react-apollo"
 import gql from "graphql-tag"
 
-import { MyContext } from "./utils/contextProvider"
+import { MyContext } from "../../utils/contextProvider"
 
 const ME = gql`
   {

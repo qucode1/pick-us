@@ -3,13 +3,12 @@ import { Query } from "react-apollo"
 import gql from "graphql-tag"
 import { Link, Redirect } from "react-router-dom"
 
-import { MyContext } from "./utils/contextProvider"
+import { MyContext } from "../../utils/contextProvider"
 
 const ME = gql`
   {
     me {
       id
-      profileToken
       firstName
       lastName
       email
@@ -41,7 +40,7 @@ const Dashboard = () => {
           )
         } else {
           let response
-          localStorage.setItem("profileToken", data.me.profileToken)
+          // localStorage.setItem("profileToken", data.me.profileToken)
           if (data.me.role === "tempUser" || data.me.role === "newUser") {
             response = <Redirect to="/profile" />
           } else
