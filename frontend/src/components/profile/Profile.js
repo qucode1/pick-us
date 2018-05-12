@@ -4,6 +4,10 @@ import { Query, Mutation } from "react-apollo"
 import gql from "graphql-tag"
 
 import { MyContext } from "../../utils/contextProvider"
+import Card, { CardActions, CardContent } from "material-ui/Card"
+import Typography from "material-ui/Typography"
+import TextField from "material-ui/TextField"
+import Button from "material-ui/Button"
 
 const ME = gql`
   {
@@ -108,7 +112,7 @@ class Profile extends Component {
       lastName: "",
       email: ""
     }
-    this.onInputChange = this.onInputChange.bind(this)
+    this.handleChange = this.handleChange.bind(this)
     this.updateProfile = this.updateProfile.bind(this)
   }
   componentDidMount() {
@@ -118,7 +122,7 @@ class Profile extends Component {
       email: this.props.email
     })
   }
-  onInputChange(e) {
+  handleChange = e => {
     this.setState({
       [e.target.name]: e.target.value
     })
@@ -137,30 +141,71 @@ class Profile extends Component {
   render() {
     return (
       <Fragment>
-        <h2>Profile Component</h2>
+        <Typography variant="display1">Profile</Typography>
+        <Card>
+          <CardContent>
+            <TextField
+              required
+              id="firstName"
+              name="firstName"
+              label="First Name"
+              value={this.state.firstName}
+              onChange={this.handleChange}
+            />
+            <TextField
+              required
+              id="lastName"
+              name="lastName"
+              label="Last Name"
+              value={this.state.lastName}
+              onChange={this.handleChange}
+            />
+            <TextField
+              required
+              id="email"
+              name="email"
+              label="Email"
+              value={this.state.email}
+              onChange={this.handleChange}
+            />
+          </CardContent>
+          <CardActions>
+            <Button
+              variant="raised"
+              color="primary"
+              onClick={this.updateProfile}
+            >
+              Update
+            </Button>
+            <Button color="primary" component={Link} to="/">
+              Home
+            </Button>
+          </CardActions>
+        </Card>
+        {/* <h2>Profile Component</h2>
         <input
           type="text"
           placeholder="First Name"
           name="firstName"
           value={this.state.firstName}
-          onChange={this.onInputChange}
+          onChange={this.handleChange}
         />
         <input
           type="text"
           placeholder="Last Name"
           name="lastName"
           value={this.state.lastName}
-          onChange={this.onInputChange}
+          onChange={this.handleChange}
         />
         <input
           type="email"
           placeholder="your@email.com"
           name="email"
           value={this.state.email}
-          onChange={this.onInputChange}
+          onChange={this.handleChange}
         />
         <button onClick={this.updateProfile}>Update Profile</button>
-        <Link to="/">Home</Link>
+        <Link to="/">Home</Link> */}
       </Fragment>
     )
   }

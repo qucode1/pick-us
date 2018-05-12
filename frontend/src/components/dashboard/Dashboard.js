@@ -5,6 +5,11 @@ import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
+import { withStyles } from "material-ui/styles"
+import Typography from "material-ui/Typography"
+import Card, { CardActions, CardContent } from "material-ui/Card"
+import Button from "material-ui/Button"
+
 const ME = gql`
   {
     me {
@@ -18,7 +23,20 @@ const ME = gql`
   }
 `
 
-const Dashboard = () => {
+const styles = theme => ({
+  heading: {
+    marginTop: "10px",
+    marginBottom: "10px"
+  },
+  userInfo: {
+    display: "inline-block",
+    width: "80vW",
+    maxWidth: "700px"
+    // minWidth: "200px"
+  }
+})
+
+const Dashboard = props => {
   return (
     <Query query={ME}>
       {({ loading, error, data }) => {
@@ -46,14 +64,28 @@ const Dashboard = () => {
           } else
             response = (
               <Fragment>
-                <h2>Dashboard Component</h2>
-                <h4>
-                  {data.me.firstName} {data.me.lastName}
-                </h4>
-                <h4>{data.me.email}</h4>
-                <h4>{data.me.role}</h4>
-                <h4>{data.me.auth0}</h4>
-                <Link to="/profile">Profile</Link>
+                <Typography
+                  className={props.classes.heading}
+                  variant="display1"
+                >
+                  Dashboard
+                </Typography>
+                <Card className={props.classes.userInfo}>
+                  <CardContent>
+                    <Typography variant="title">
+                      {data.me.firstName} {data.me.lastName}
+                    </Typography>
+                    <Typography variant="subheading">
+                      {data.me.email}
+                    </Typography>
+                    <Typography variant="subheading">{data.me.role}</Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button component={Link} to="/profile">
+                      Profile
+                    </Button>
+                  </CardActions>
+                </Card>
               </Fragment>
             )
           return response
@@ -63,4 +95,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default withStyles(styles)(Dashboard)

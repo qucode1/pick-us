@@ -1,5 +1,5 @@
 import React, { Fragment } from "react"
-import { Redirect } from "react-router-dom"
+import { Redirect, Link } from "react-router-dom"
 import { Query } from "react-apollo"
 import gql from "graphql-tag"
 
@@ -8,10 +8,14 @@ import Loading from "../loading/Loading"
 import { MyContext } from "../../utils/contextProvider"
 
 import { withStyles } from "material-ui/styles/"
-import Button from "material-ui/Button" // add
-import Avatar from "material-ui/Avatar"
+import AppBar from "material-ui/AppBar"
+import Toolbar from "material-ui/Toolbar"
+import IconButton from "material-ui/IconButton"
+import Button from "material-ui/Button"
+import Typography from "material-ui/Typography"
+import Menu, { MenuItem } from "material-ui/Menu"
 
-import yoga from "../../yoga.png"
+// import pickUsLogo from "../../pickus-template.svg"
 
 const ME = gql`
   {
@@ -24,14 +28,18 @@ const ME = gql`
 `
 
 const styles = theme => ({
-  avatar: {
-    margin: 10,
-    backgroundColor: "#efefef",
-    color: "#333"
+  root: {
+    flexGrow: 1
   },
-  button: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText
+  flex: {
+    flex: 1
+  },
+  logo: {
+    height: "60px"
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20
   }
 })
 
@@ -55,65 +63,52 @@ const Header = props => (
         )
       } else {
         return (
-          <header className="App-header">
-            <img src={yoga} className="App-logo" alt="logo" />
-            <h1 className="App-title">
-              Welcome to <code>graphql-yoga</code>
-            </h1>
-            {props.isLoggedIn ? (
-              <Button
-                className={props.classes.button}
-                variant="raised"
-                onClick={props.logout}
-              >
-                Logout
-              </Button>
-            ) : (
-              <Button
-                className={props.classes.button}
-                variant="raised"
-                onClick={props.login}
-              >
-                Login
-              </Button>
-            )}
-            {props.isLoggedIn &&
-              data.me &&
-              data.me.firstName && (
-                <Avatar className={props.classes.avatar}>
-                  {data.me.firstName[0]}
-                  {data.me.lastName[0]}
-                </Avatar>
-              )}
+          <header className={props.classes.root}>
+            <AppBar position="static">
+              <Toolbar>
+                <IconButton
+                  className={props.classes.menuButton}
+                  color="inherit"
+                  aria-label="Menu"
+                >
+                  =
+                </IconButton>
+                {/* <img
+                  src={pickUsLogo}
+                  className={props.classes.logo}
+                  alt="logo"
+                /> */}
+                <Typography
+                  variant="title"
+                  color="inherit"
+                  className={props.classes.flex}
+                >
+                  Pick Us NRW
+                </Typography>
+                {props.isLoggedIn && (
+                  <IconButton
+                    component={Link}
+                    to="/profile"
+                    color="inherit"
+                    aria-label="Menu"
+                  >
+                    {data.me.firstName[0]}
+                    {data.me.lastName[0]}
+                  </IconButton>
+                )}
+                <Button
+                  color="inherit"
+                  onClick={props.isLoggedIn ? props.logout : props.login}
+                >
+                  {props.isLoggedIn ? "Logout" : "Login"}
+                </Button>
+              </Toolbar>
+            </AppBar>
           </header>
         )
       }
     }}
   </Query>
-  // ) : (
-  //   <header className="App-header">
-  //     <img src={yoga} className="App-logo" alt="logo" />
-  //     <h1 className="App-title">
-  //       Welcome to <code>graphql-yoga</code>
-  //     </h1>
-  //     {props.isLoggedIn ? (
-  //       <Button
-  //         className={props.classes.button}
-  //         variant="raised"
-  //         onClick={props.logout}
-  //       >
-  //         Logout
-  //       </Button>
-  //     ) : (
-  //       <Button
-  //         className={props.classes.button}
-  //         variant="raised"
-  //         onClick={props.login}
-  //       >
-  //         Login
-  //       </Button>
-  //     )}
-  // </header>
 )
 
 export default withStyles(styles)(Header)

@@ -70,7 +70,7 @@ const resolvers = {
         // console.log("resolver ctx profileToken", profileToken)
         if (!idToken) {
           const e = new AuthenticationError()
-          return e
+          return {}
         } else if (!profileToken) {
           console.log("me resolver ctx.user no profileToken")
           const newUser = new User({
