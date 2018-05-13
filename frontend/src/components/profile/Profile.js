@@ -182,30 +182,6 @@ class Profile extends Component {
             </Button>
           </CardActions>
         </Card>
-        {/* <h2>Profile Component</h2>
-        <input
-          type="text"
-          placeholder="First Name"
-          name="firstName"
-          value={this.state.firstName}
-          onChange={this.handleChange}
-        />
-        <input
-          type="text"
-          placeholder="Last Name"
-          name="lastName"
-          value={this.state.lastName}
-          onChange={this.handleChange}
-        />
-        <input
-          type="email"
-          placeholder="your@email.com"
-          name="email"
-          value={this.state.email}
-          onChange={this.handleChange}
-        />
-        <button onClick={this.updateProfile}>Update Profile</button>
-        <Link to="/">Home</Link> */}
       </Fragment>
     )
   }

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react"
+import React, { Component, Fragment } from "react"
 import { Redirect, Link } from "react-router-dom"
 import { Query } from "react-apollo"
 import gql from "graphql-tag"
@@ -43,72 +43,111 @@ const styles = theme => ({
   }
 })
 
-const Header = props => (
-  // props.isLoggedIn ? (
-  <Query query={ME}>
-    {({ loading, error, data }) => {
-      if (loading) return <Loading />
-      else if (error) {
-        return (
-          <MyContext.Consumer>
-            {context => {
-              return (
-                <Fragment>
-                  {context.setError(error)}
-                  <Redirect to="/error" />
-                </Fragment>
-              )
-            }}
-          </MyContext.Consumer>
-        )
-      } else {
-        return (
-          <header className={props.classes.root}>
-            <AppBar position="static">
-              <Toolbar>
-                <IconButton
-                  className={props.classes.menuButton}
-                  color="inherit"
-                  aria-label="Menu"
-                >
-                  =
-                </IconButton>
-                {/* <img
+class Header extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      anchorEl: null
+    }
+  }
+  handleUserMenuClick = e => {
+    this.setState({
+      anchorEl: e.currentTarget
+    })
+  }
+  handleUserMenuClose = () => {
+    this.setState({ anchorEl: null })
+  }
+  render() {
+    const { anchorEl } = this.state
+    return (
+      <Query query={ME}>
+        {({ loading, error, data }) => {
+          if (loading) return <Loading />
+          else if (error) {
+            return (
+              <MyContext.Consumer>
+                {context => {
+                  return (
+                    <Fragment>
+                      {context.setError(error)}
+                      <Redirect to="/error" />
+                    </Fragment>
+                  )
+                }}
+              </MyContext.Consumer>
+            )
+          } else {
+            return (
+              <header className={this.props.classes.root}>
+                <AppBar position="static">
+                  <Toolbar>
+                    <IconButton
+                      className={this.props.classes.menuButton}
+                      color="inherit"
+                      aria-label="Menu"
+                    >
+                      =
+                    </IconButton>
+                    {/* <img
                   src={pickUsLogo}
-                  className={props.classes.logo}
+                  className={this.props.classes.logo}
                   alt="logo"
                 /> */}
-                <Typography
-                  variant="title"
-                  color="inherit"
-                  className={props.classes.flex}
-                >
-                  Pick Us NRW
-                </Typography>
-                {props.isLoggedIn && (
-                  <IconButton
-                    component={Link}
-                    to="/profile"
-                    color="inherit"
-                    aria-label="Menu"
-                  >
-                    {data.me.firstName[0]}
-                    {data.me.lastName[0]}
-                  </IconButton>
-                )}
-                <Button
-                  color="inherit"
-                  onClick={props.isLoggedIn ? props.logout : props.login}
-                >
-                  {props.isLoggedIn ? "Logout" : "Login"}
-                </Button>
-              </Toolbar>
-            </AppBar>
-          </header>
-        )
-      }
-    }}
-  </Query>
-)
+                    <Typography
+                      variant="title"
+                      color="inherit"
+                      className={this.props.classes.flex}
+                    >
+                      Pick Us NRW
+                    </Typography>
+                    {this.props.isLoggedIn && (
+                      <Fragment>
+                        <IconButton
+                          // component={Link}
+                          // to="/profile"
+                          color="inherit"
+                          aria-owns={anchorEl ? "User Menu" : null}
+                          aria-haspopup="true"
+                          onClick={this.handleUserMenuClick}
+                        >
+                          {data.me.firstName[0]}
+                          {data.me.lastName[0]}
+                        </IconButton>
+                        <Menu
+                          id="userMenu"
+                          anchorEl={anchorEl}
+                          open={!!anchorEl}
+                          onClose={this.handleUserMenuClose}
+                        >
+                          <MenuItem onClick={this.handleUserMenuClose}>
+                            Profile
+                          </MenuItem>
+                          <MenuItem onClick={this.handleUserMenuClose}>
+                            Logout
+                          </MenuItem>
+                        </Menu>
+                      </Fragment>
+                    )}
+                    <Button
+                      color="inherit"
+                      onClick={
+                        this.props.isLoggedIn
+                          ? this.props.logout
+                          : this.props.login
+                      }
+                    >
+                      {this.props.isLoggedIn ? "Logout" : "Login"}
+                    </Button>
+                  </Toolbar>
+                </AppBar>
+              </header>
+            )
+          }
+        }}
+      </Query>
+    )
+  }
+}
 
 export default withStyles(styles)(Header)

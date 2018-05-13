@@ -19,16 +19,16 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isLoggedIn: false,
+      isLoggedIn: !!localStorage.getItem("idToken"),
       error: null
     }
     this.logout = this.logout.bind(this)
     this.setError = this.setError.bind(this)
   }
   componentDidMount() {
-    this.setState({
-      isLoggedIn: !!localStorage.getItem("idToken")
-    })
+    // this.setState({
+    //   isLoggedIn: !!localStorage.getItem("idToken")
+    // })
   }
   setError(e) {
     this.setState({
