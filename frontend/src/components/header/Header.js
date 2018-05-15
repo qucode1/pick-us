@@ -15,7 +15,7 @@ import Button from "material-ui/Button"
 import Typography from "material-ui/Typography"
 import Menu, { MenuItem } from "material-ui/Menu"
 
-// import pickUsLogo from "../../pickus-template.svg"
+// import pickUsLogo from "../../logo.svg"
 
 const ME = gql`
   {
@@ -35,11 +35,15 @@ const styles = theme => ({
     flex: 1
   },
   logo: {
-    height: "60px"
+    height: "40px",
+    margin: `0 ${theme.spacing.unit}px`
   },
   menuButton: {
     marginLeft: -12,
     marginRight: 20
+  },
+  logoutText: {
+    color: theme.palette.error.light
   }
 })
 
@@ -57,6 +61,10 @@ class Header extends Component {
   }
   handleUserMenuClose = () => {
     this.setState({ anchorEl: null })
+  }
+  handleUserMenuLogout = () => {
+    this.handleUserMenuClose()
+    this.props.logout()
   }
   render() {
     const { anchorEl } = this.state
@@ -82,18 +90,20 @@ class Header extends Component {
               <header className={this.props.classes.root}>
                 <AppBar position="static">
                   <Toolbar>
-                    <IconButton
-                      className={this.props.classes.menuButton}
-                      color="inherit"
-                      aria-label="Menu"
-                    >
-                      =
-                    </IconButton>
+                    {this.props.isLOggedIn && (
+                      <IconButton
+                        className={this.props.classes.menuButton}
+                        color="inherit"
+                        aria-label="Menu"
+                      >
+                        =
+                      </IconButton>
+                    )}
                     {/* <img
-                  src={pickUsLogo}
-                  className={this.props.classes.logo}
-                  alt="logo"
-                /> */}
+                      src={pickUsLogo}
+                      className={this.props.classes.logo}
+                      alt="logo"
+                    /> */}
                     <Typography
                       variant="title"
                       color="inherit"
@@ -120,10 +130,24 @@ class Header extends Component {
                           open={!!anchorEl}
                           onClose={this.handleUserMenuClose}
                         >
-                          <MenuItem onClick={this.handleUserMenuClose}>
+                          <MenuItem
+                            component={Link}
+                            to="/"
+                            onClick={this.handleUserMenuClose}
+                          >
+                            Dashboard
+                          </MenuItem>
+                          <MenuItem
+                            component={Link}
+                            to="/profile"
+                            onClick={this.handleUserMenuClose}
+                          >
                             Profile
                           </MenuItem>
-                          <MenuItem onClick={this.handleUserMenuClose}>
+                          <MenuItem
+                            className={this.props.classes.logoutText}
+                            onClick={this.handleUserMenuLogout}
+                          >
                             Logout
                           </MenuItem>
                         </Menu>

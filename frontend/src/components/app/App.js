@@ -15,6 +15,30 @@ import Landing from "../landing/Landing"
 import ErrorComponent from "../error/Error"
 import Header from "../header/Header"
 
+import logo from "../../bgLogo.svg"
+
+import { withStyles } from "material-ui/styles"
+
+const styles = theme => ({
+  root: {
+    height: "100vH",
+    backgroundColor: "rgba(61, 110, 191, .05)"
+  },
+  background: {
+    position: "absolute",
+    height: "100vH",
+    width: "100vW",
+    zIndex: "-1",
+    backgroundImage: `url("${logo}")`,
+    backgroundSize: "80vH",
+    backgroundRepeat: "no-repeat",
+    backgroundOrigin: "border-box",
+    backgroundAttachment: "fixed",
+    backgroundPosition: "center",
+    filter: "opacity(.1) drop-shadow(1px 1px 3px dimgrey)"
+  }
+})
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -89,7 +113,8 @@ class App extends Component {
           setError: this.setError
         }}
       >
-        <div className="App">
+        <div className={this.props.classes.root}>
+          <div className={this.props.classes.background} />
           <Header
             login={this.login}
             logout={this.logout}
@@ -134,4 +159,4 @@ class Login extends Component {
   }
 }
 
-export default withApollo(withRouter(App))
+export default withApollo(withRouter(withStyles(styles)(App)))
