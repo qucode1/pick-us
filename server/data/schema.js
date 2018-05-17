@@ -5,7 +5,7 @@ const typeDefs = `
   type Query {
     me: Me
     user(id: String, firstName: String, lastName: String, email: String, auth0: String): User
-    allUsers: [User]
+    allUsers(limit: Int, skip: Int): [User]
     job(id: String): Job
     jobs(title: String, location: String): [Job]
     allJobs: [Job]
@@ -70,7 +70,7 @@ const typeDefs = `
   }
   input UserInput {
     firstName: String!
-    lastName: String
+    lastName: String!
     email: String!
   }
   input LocationInput {
@@ -82,9 +82,9 @@ const typeDefs = `
     description: String!
   }
   type Mutation {
-    createUser(input: UserInput!, location: LocationInput!): User
+    addUser(input: UserInput!, location: LocationInput): User
     updateMe(input: UserInput!, location: LocationInput): Me
-    createJob(input: JobInput!, locations: [LocationInput!]!): Job
+    addJob(input: JobInput!, locations: [LocationInput!]!): Job
   }
 `
 

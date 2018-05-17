@@ -14,6 +14,7 @@ import Profile from "../profile/Profile"
 import Landing from "../landing/Landing"
 import ErrorComponent from "../error/Error"
 import Header from "../header/Header"
+import AddUser from "../addUser/AddUser"
 
 import logo from "../../bgLogo.svg"
 
@@ -62,7 +63,7 @@ class App extends Component {
   }
   login = async () => {
     loginUser(Lock)
-    // prevent adding multiple identical eventListeners
+    // prevent adding multiple identical eventListeners if not 1st login
     if (this.state.firstLogin) {
       Lock.on("authenticated", authResult => {
         if (!localStorage.getItem("idToken")) {
@@ -132,6 +133,7 @@ class App extends Component {
           />
           <Switch>
             <PrivateRoute exact path="/profile" component={Profile} />
+            <PrivateRoute path="/users/add" component={AddUser} />
             <PrivateRoute exact path="/callback" component={Callback} />
             <Route exact path="/error" component={ErrorComponent} />
             <Route

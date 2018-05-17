@@ -37,8 +37,8 @@ const Landing = ({ classes }) => (
           Willkommen auf unserer Job Platform!
         </Typography>
         <Typography variant="subheading">
-          Wenn Sie sich für einen Job oder eine Schulung bewerben möchten,
-          registrieren Sie sich jetzt!{" "}
+          Sie möchten sich für einen Job oder eine Schulung bewerben?
+          Registrieren Sie sich jetzt!{" "}
         </Typography>
       </CardContent>
       <CardActions className={classes.actions}>

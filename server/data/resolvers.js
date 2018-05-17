@@ -127,35 +127,41 @@ const resolvers = {
           statusText: err.response.statusText
         }
       }
+    },
+    user(_, args, { profileToken, user }) {
+      try {
+        return user.role === "admin" ? User.findOne(args) : {}
+      } catch (err) {
+        const e = new CustomError({
+          message: "user query resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
+        console.error("user query resolver error", err)
+        return e
+      }
+    },
+    async allUsers(_, { limit = 100, skip = 0 }, { profileToken, user }) {
+      try {
+        return user.role === "admin"
+          ? User.find()
+              .limit(limit)
+              .skip(skip)
+          : [{}]
+      } catch (err) {
+        const e = new CustomError({
+          message: "allUsers query resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
+        console.error("allUsers query resolver error", err)
+        return e
+      }
     }
-    // async user(_, args, { accessToken, profileToken }) {
-    //     try {
-    //         const auth = await isAuthenticated(accessToken)
-    //         if (!auth) return new Error("You are not authenticated")
-
-    //         const userProfile = await isUser(auth.sub, profileToken)
-    //         return (userProfile && isAdmin(userProfile))
-    //             ? User.findOne(args)
-    //             : new Error("You are not authorized to do this.")
-    //     } catch (err) {
-    //         console.error("user resolver catched error", err);
-    //         return new Error(err.message)
-    //     }
-    // },
-    // async allUsers(_, args, { accessToken, profileToken }) {
-    //     try {
-    //         const auth = await isAuthenticated(accessToken)
-    //         if (!auth) return new Error("You are not authenticated")
-
-    //         const userProfile = await isUser(auth.sub, profileToken)
-    //         return (userProfile && isAdmin(userProfile))
-    //             ? User.find()
-    //             : new Error("You are not authorized to do this.")
-    //     } catch (err) {
-    //         console.error("allUsers resolver catched error", err)
-    //         return new Error(err.message)
-    //     }
-    // },
     // job(_, args) {
     //     return Job.findOne(args);
     // },
@@ -210,11 +216,11 @@ const resolvers = {
       return publicProfileKey
     }
   },
-  // User: {
-  //     id(user) {
-  //         return user._id
-  //     }
-  // },
+  User: {
+    id(user) {
+      return user._id
+    }
+  },
   // Job: {
   //     id(job) {
   //         return job._id
@@ -232,13 +238,13 @@ const resolvers = {
   //     }
   // },
   Mutation: {
-    async createUser(_, { input, location }, { idToken, profileToken, user }) {
+    async addUser(_, { input, location }, { idToken, profileToken, user }) {
       try {
         if (!idToken) return new AuthenticationError()
         // check for profileToken instead of user,
         // since user will always have at least email and auth0 as
         // long as there is an idToken
-        if ((profileToken && isAdmin(user)) || !profileToken) {
+        if (profileToken && isAdmin(user)) {
           const user = new User({
             _id: new mongoose.Types.ObjectId(),
             ...input
@@ -255,9 +261,9 @@ const resolvers = {
           return await user.save()
         } else return new AuthorizationError()
       } catch (error) {
-        console.error("createUser mutation catched error", error)
+        console.error("addUser mutation catched error", error)
         return new CustomError({
-          message: "createUser mutation resolver error",
+          message: "addUser mutation resolver error",
           data: {
             error
           }

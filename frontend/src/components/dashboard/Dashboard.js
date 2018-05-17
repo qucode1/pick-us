@@ -10,6 +10,8 @@ import Typography from "material-ui/Typography"
 import Card, { CardActions, CardContent } from "material-ui/Card"
 import Button from "material-ui/Button"
 
+import LatestUser from "../latestUser/LatestUser"
+
 const ME = gql`
   {
     me {
@@ -89,6 +91,7 @@ const Dashboard = props => {
                     </Button>
                   </CardActions>
                 </Card>
+                <LatestUser />
               </Fragment>
             )
           return response
