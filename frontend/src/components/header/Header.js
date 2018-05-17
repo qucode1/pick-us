@@ -68,108 +68,131 @@ class Header extends Component {
   }
   render() {
     const { anchorEl } = this.state
+    const { isLoggedIn } = this.props
     return (
-      <Query query={ME}>
-        {({ loading, error, data }) => {
-          if (loading) return <Loading />
-          else if (error) {
-            return (
-              <MyContext.Consumer>
-                {context => {
-                  return (
-                    <Fragment>
-                      {context.setError(error)}
-                      <Redirect to="/error" />
-                    </Fragment>
-                  )
-                }}
-              </MyContext.Consumer>
-            )
-          } else {
-            return (
-              <header className={this.props.classes.root}>
-                <AppBar position="static">
-                  <Toolbar>
-                    {this.props.isLOggedIn && (
-                      <IconButton
-                        className={this.props.classes.menuButton}
-                        color="inherit"
-                        aria-label="Menu"
-                      >
-                        =
-                      </IconButton>
-                    )}
-                    {/* <img
-                      src={pickUsLogo}
-                      className={this.props.classes.logo}
-                      alt="logo"
-                    /> */}
-                    <Typography
-                      variant="title"
-                      color="inherit"
-                      className={this.props.classes.flex}
-                    >
-                      Pick Us NRW
-                    </Typography>
-                    {this.props.isLoggedIn && (
-                      <Fragment>
-                        <IconButton
-                          // component={Link}
-                          // to="/profile"
+      <Fragment>
+        {isLoggedIn ? (
+          <Query query={ME}>
+            {({ loading, error, data }) => {
+              if (loading) return <Loading />
+              else if (error) {
+                console.log("header error", error)
+                return (
+                  <MyContext.Consumer>
+                    {context => {
+                      return (
+                        <Fragment>
+                          {context.setError(error)}
+                          <Redirect to="/error" />
+                        </Fragment>
+                      )
+                    }}
+                  </MyContext.Consumer>
+                )
+              } else {
+                return (
+                  <header className={this.props.classes.root}>
+                    <AppBar position="static">
+                      <Toolbar>
+                        {this.props.isLoggedIn && (
+                          <IconButton
+                            className={this.props.classes.menuButton}
+                            color="inherit"
+                            aria-label="Menu"
+                          >
+                            =
+                          </IconButton>
+                        )}
+                        {/* <img
+                        src={pickUsLogo}
+                        className={this.props.classes.logo}
+                        alt="logo"
+                      /> */}
+                        <Typography
+                          variant="title"
                           color="inherit"
-                          aria-owns={anchorEl ? "User Menu" : null}
-                          aria-haspopup="true"
-                          onClick={this.handleUserMenuClick}
+                          className={this.props.classes.flex}
                         >
-                          {data.me.firstName[0]}
-                          {data.me.lastName[0]}
-                        </IconButton>
-                        <Menu
-                          id="userMenu"
-                          anchorEl={anchorEl}
-                          open={!!anchorEl}
-                          onClose={this.handleUserMenuClose}
+                          Pick Us NRW
+                        </Typography>
+                        {this.props.isLoggedIn && (
+                          <Fragment>
+                            <IconButton
+                              // component={Link}
+                              // to="/profile"
+                              color="inherit"
+                              aria-owns={anchorEl ? "User Menu" : null}
+                              aria-haspopup="true"
+                              onClick={this.handleUserMenuClick}
+                            >
+                              {data.me.firstName[0]}
+                              {data.me.lastName[0]}
+                            </IconButton>
+                            <Menu
+                              id="userMenu"
+                              anchorEl={anchorEl}
+                              open={!!anchorEl}
+                              onClose={this.handleUserMenuClose}
+                            >
+                              <MenuItem
+                                component={Link}
+                                to="/"
+                                onClick={this.handleUserMenuClose}
+                              >
+                                Dashboard
+                              </MenuItem>
+                              <MenuItem
+                                component={Link}
+                                to="/profile"
+                                onClick={this.handleUserMenuClose}
+                              >
+                                Profile
+                              </MenuItem>
+                              <MenuItem
+                                className={this.props.classes.logoutText}
+                                onClick={this.handleUserMenuLogout}
+                              >
+                                Logout
+                              </MenuItem>
+                            </Menu>
+                          </Fragment>
+                        )}
+                        <Button
+                          color="inherit"
+                          onClick={
+                            this.props.isLoggedIn
+                              ? this.props.logout
+                              : this.props.login
+                          }
                         >
-                          <MenuItem
-                            component={Link}
-                            to="/"
-                            onClick={this.handleUserMenuClose}
-                          >
-                            Dashboard
-                          </MenuItem>
-                          <MenuItem
-                            component={Link}
-                            to="/profile"
-                            onClick={this.handleUserMenuClose}
-                          >
-                            Profile
-                          </MenuItem>
-                          <MenuItem
-                            className={this.props.classes.logoutText}
-                            onClick={this.handleUserMenuLogout}
-                          >
-                            Logout
-                          </MenuItem>
-                        </Menu>
-                      </Fragment>
-                    )}
-                    <Button
-                      color="inherit"
-                      onClick={
-                        this.props.isLoggedIn
-                          ? this.props.logout
-                          : this.props.login
-                      }
-                    >
-                      {this.props.isLoggedIn ? "Logout" : "Login"}
-                    </Button>
-                  </Toolbar>
-                </AppBar>
-              </header>
-            )
-          }
-        }}
-      </Query>
+                          {this.props.isLoggedIn ? "Logout" : "Login"}
+                        </Button>
+                      </Toolbar>
+                    </AppBar>
+                  </header>
+                )
+              }
+            }}
+          </Query>
+        ) : (
+          <header className={this.props.classes.root}>
+            <AppBar position="static">
+              <Toolbar>
+                <Typography
+                  variant="title"
+                  color="inherit"
+                  className={this.props.classes.flex}
+                >
+                  Pick Us NRW
+                </Typography>
+                <Button color="inherit" onClick={this.props.login}>
+                  Login
+                </Button>
+              </Toolbar>
+            </AppBar>
+          </header>
+        )}
+      </Fragment>
     )
   }
 }

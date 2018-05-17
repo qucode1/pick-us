@@ -44,7 +44,8 @@ class App extends Component {
     super(props)
     this.state = {
       isLoggedIn: !!localStorage.getItem("idToken"),
-      error: null
+      error: null,
+      firstLogin: true
     }
     this.logout = this.logout.bind(this)
     this.setError = this.setError.bind(this)
@@ -60,57 +61,61 @@ class App extends Component {
     })
   }
   login = async () => {
-    // this.props.history.push("/login")
     loginUser(Lock)
-    Lock.on("authenticated", authResult => {
-      console.log("login authResult", authResult)
-      Lock.getUserInfo(authResult.accessToken, async (err, profile) => {
-        if (err) console.error("App.login", err)
-        // console.log("login authenticated profile", profile)
-        localStorage.setItem("idToken", authResult.idToken)
-        localStorage.setItem("accessToken", authResult.accessToken)
-        await this.props.client.resetStore()
-        const {
-          data: { me: { profileToken } }
-        } = await this.props.client.query({
-          query: gql`
-            {
-              me {
-                id
-                profileToken
-                firstName
-                lastName
-                email
-                auth0
-                role
-              }
-            }
-          `
-        })
-        localStorage.setItem("profileToken", profileToken)
-        this.setState(
-          () => ({
-            isLoggedIn: true
-          }),
-          this.props.history.push("/")
-        )
+    // prevent adding multiple identical eventListeners
+    if (this.state.firstLogin) {
+      Lock.on("authenticated", authResult => {
+        if (!localStorage.getItem("idToken")) {
+          Lock.getUserInfo(authResult.accessToken, async (err, profile) => {
+            if (err) console.error("App.login", err)
+            localStorage.setItem("idToken", authResult.idToken)
+            localStorage.setItem("accessToken", authResult.accessToken)
+            await this.props.client.resetStore()
+            const {
+              data: { me: { profileToken } }
+            } = await this.props.client.query({
+              query: gql`
+                {
+                  me {
+                    id
+                    profileToken
+                    firstName
+                    lastName
+                    email
+                    auth0
+                    role
+                  }
+                }
+              `
+            })
+            localStorage.setItem("profileToken", profileToken)
+            this.setState(
+              () => ({
+                isLoggedIn: true
+              }),
+              this.props.history.push("/")
+            )
+          })
+        }
       })
-    })
+      this.setState({ firstLogin: false })
+    }
   }
-  logout = () => {
+  logout = async () => {
     logoutUser()
     this.setState({
       isLoggedIn: false
     })
-    this.props.client.resetStore()
-    this.props.history.push("/logout")
+    await this.props.client.resetStore()
+    this.props.history.push("/")
   }
   render() {
     return (
       <MyContext.Provider
         value={{
           state: this.state,
-          setError: this.setError
+          setError: this.setError,
+          login: this.login
         }}
       >
         <div className={this.props.classes.root}>
@@ -138,10 +143,9 @@ class App extends Component {
             <Route
               exact
               path="/:anythingElse"
-              render={() => {
-                this.setError({ message: "There is nothing to see here :(" })
-                return <Redirect to="/error" />
-              }}
+              render={() => (
+                <ErrorComponent errorProp="There is nothing to see here :(" />
+              )}
             />
           </Switch>
         </div>

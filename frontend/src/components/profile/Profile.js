@@ -4,6 +4,7 @@ import { Query, Mutation } from "react-apollo"
 import gql from "graphql-tag"
 
 import { MyContext } from "../../utils/contextProvider"
+import { withStyles } from "material-ui/styles"
 import Card, { CardActions, CardContent } from "material-ui/Card"
 import Typography from "material-ui/Typography"
 import TextField from "material-ui/TextField"
@@ -34,6 +35,21 @@ const UPDATE_ME = gql`
   }
 `
 
+const styles = theme => ({
+  card: {
+    margin: "auto",
+    width: "75%",
+    maxWidth: "800px",
+    [theme.breakpoints.down("md")]: {
+      width: "95%"
+    }
+  },
+  heading: {
+    textAlign: "center",
+    margin: theme.spacing.unit * 2
+  }
+})
+
 const ProfileQueryWrapper = props => (
   <Query query={ME}>
     {({ loading, error, data }) => {
@@ -58,7 +74,7 @@ const ProfileQueryWrapper = props => (
       if (!localStorage.getItem("profileToken")) {
         localStorage.setItem("profileToken", data.me.profileToken)
       }
-      return <Profile {...props} {...data.me} />
+      return <StyledProfile {...props} {...data.me} />
     }}
   </Query>
 )
@@ -139,10 +155,13 @@ class Profile extends Component {
     })
   }
   render() {
+    const { classes } = this.props
     return (
       <Fragment>
-        <Typography variant="display1">Profile</Typography>
-        <Card>
+        <Typography variant="display1" className={classes.heading}>
+          Profile
+        </Typography>
+        <Card className={classes.card}>
           <CardContent>
             <TextField
               required
@@ -186,5 +205,7 @@ class Profile extends Component {
     )
   }
 }
+
+const StyledProfile = withStyles(styles)(Profile)
 
 export default ProfileMutationWrapper

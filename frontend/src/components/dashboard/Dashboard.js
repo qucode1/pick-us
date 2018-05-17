@@ -24,19 +24,22 @@ const ME = gql`
 `
 
 const styles = theme => ({
-  heading: {
-    marginTop: "10px",
-    marginBottom: "10px"
+  card: {
+    margin: "auto",
+    width: "75%",
+    maxWidth: "800px",
+    [theme.breakpoints.down("md")]: {
+      width: "95%"
+    }
   },
-  userInfo: {
-    display: "inline-block",
-    width: "80vW",
-    maxWidth: "700px"
-    // minWidth: "200px"
+  heading: {
+    textAlign: "center",
+    margin: theme.spacing.unit * 2
   }
 })
 
 const Dashboard = props => {
+  const { classes } = props
   return (
     <Query query={ME}>
       {({ loading, error, data }) => {
@@ -70,7 +73,7 @@ const Dashboard = props => {
                 >
                   Dashboard
                 </Typography>
-                <Card className={props.classes.userInfo}>
+                <Card className={props.classes.card}>
                   <CardContent>
                     <Typography variant="title">
                       {data.me.firstName} {data.me.lastName}
@@ -81,7 +84,7 @@ const Dashboard = props => {
                     <Typography variant="subheading">{data.me.role}</Typography>
                   </CardContent>
                   <CardActions>
-                    <Button component={Link} to="/profile">
+                    <Button color="primary" component={Link} to="/profile">
                       Profile
                     </Button>
                   </CardActions>

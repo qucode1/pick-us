@@ -12,7 +12,7 @@ import { createMuiTheme } from "material-ui/styles"
 
 import App from "./components/app/App"
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
   fetchOptions: {
     useGETForQueries: true,
