@@ -5,7 +5,7 @@ const typeDefs = `
   type Query {
     me: Me
     user(id: String, firstName: String, lastName: String, email: String, auth0: String): User
-    allUsers(limit: Int, skip: Int): [User]
+    allUsers(limit: Int, skip: Int, sort: SortInput): [User]
     job(id: String): Job
     jobs(title: String, location: String): [Job]
     allJobs: [Job]
@@ -67,6 +67,10 @@ const typeDefs = `
   type LocationRef {
     address: String
     data: Location
+  }
+  input SortInput {
+    category: String!
+    order: Int!
   }
   input UserInput {
     firstName: String!

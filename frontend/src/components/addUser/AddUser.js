@@ -60,22 +60,37 @@ class AddUser extends Component {
     return (
       <Mutation
         mutation={ADDUSER}
-        // update={(cache, { data: { updateMe } }) => {
-        //   const { me } = cache.readQuery({ query: ME })
-        //   console.dir({ ...me, ...updateMe })
-        //   cache.writeQuery({
-        //     query: ME,
-        //     data: {
-        //       me: {
-        //         ...me,
-        //         firstName: updateMe.firstName,
-        //         lastName: updateMe.lastName,
-        //         email: updateMe.email,
-        //         __typename: updateMe.__typename
-        //       }
-        //     }
-        //   })
-        // }}
+        update={(cache, { data: { addUser } }) => {
+          const { allUsers } = cache.readQuery({
+            query: gql`
+              query allUsers {
+                allUsers(limit: 10, skip: 0) {
+                  id
+                  firstName
+                  lastName
+                  email
+                  role
+                }
+              }
+            `
+          })
+          cache.writeQuery({
+            query: gql`
+              query allUsers {
+                allUsers(limit: 10, skip: 0) {
+                  id
+                  firstName
+                  lastName
+                  email
+                  role
+                }
+              }
+            `,
+            data: {
+              allUsers: [addUser, ...allUsers]
+            }
+          })
+        }}
       >
         {(addUser, { loading, error, data }) => {
           return (
@@ -84,92 +99,90 @@ class AddUser extends Component {
                 Add User
               </Typography>
               <form>
-                <Route
-                  exact
-                  path="/users/add"
-                  render={() => (
-                    <Card className={classes.card}>
-                      {loading && <Loading />}
-                      {error && (
-                        <MyContext.Consumer>
-                          {context => {
-                            return (
-                              <Fragment>
-                                {context.setError(error)}
-                                <Redirect to="/error" />
-                              </Fragment>
-                            )
-                          }}
-                        </MyContext.Consumer>
-                      )}
-                      <CardContent>
-                        {data ? (
+                <Card className={classes.card}>
+                  {loading && <Loading />}
+                  {error && (
+                    <MyContext.Consumer>
+                      {context => {
+                        return (
                           <Fragment>
-                            <Typography variant="subheading">
-                              {data.addUser.firstName} {data.addUser.lastName}{" "}
-                              successfully added!
-                            </Typography>
+                            {context.setError(error)}
+                            <Redirect to="/error" />
                           </Fragment>
-                        ) : (
-                          <Fragment>
-                            <TextField
-                              id="firstName"
-                              name="firstName"
-                              label="First Name"
-                              value={this.state.firstName}
-                              onChange={this.handleChange}
-                              margin="normal"
-                            />
-                            <TextField
-                              id="lastName"
-                              name="lastName"
-                              label="Last Name"
-                              value={this.state.lastName}
-                              onChange={this.handleChange}
-                              margin="normal"
-                            />
-                            <TextField
-                              id="email"
-                              name="email"
-                              label="Email"
-                              value={this.state.email}
-                              onChange={this.handleChange}
-                              margin="normal"
-                            />
-                          </Fragment>
-                        )}
-                      </CardContent>
-                      <CardActions>
-                        {data ? (
-                          <Redirect to="/users/add/success" />
-                        ) : (
-                          <Button
-                            variant="raised"
-                            color="primary"
-                            onClick={e => {
-                              e.preventDefault()
-                              addUser({
-                                variables: {
-                                  input: { firstName, lastName, email }
-                                }
-                              })
-                            }}
-                          >
-                            Add User
-                          </Button>
-                        )}
-                        <Button color="primary" component={Link} to="/">
-                          Home
-                        </Button>
-                      </CardActions>
-                    </Card>
+                        )
+                      }}
+                    </MyContext.Consumer>
                   )}
-                />
-                <Route
-                  exact
-                  path="/users/add/success"
-                  render={() => <AddedUser user={data && data.addedUser} />}
-                />
+                  <CardContent>
+                    {data ? (
+                      <Fragment>
+                        <Typography variant="subheading">
+                          {data.addUser.firstName} {data.addUser.lastName}{" "}
+                          successfully added!
+                        </Typography>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <TextField
+                          id="firstName"
+                          name="firstName"
+                          label="First Name"
+                          value={this.state.firstName}
+                          onChange={this.handleChange}
+                          margin="normal"
+                        />
+                        <TextField
+                          id="lastName"
+                          name="lastName"
+                          label="Last Name"
+                          value={this.state.lastName}
+                          onChange={this.handleChange}
+                          margin="normal"
+                        />
+                        <TextField
+                          id="email"
+                          name="email"
+                          label="Email"
+                          value={this.state.email}
+                          onChange={this.handleChange}
+                          margin="normal"
+                        />
+                      </Fragment>
+                    )}
+                  </CardContent>
+                  <CardActions>
+                    {data ? (
+                      <MyContext.Consumer>
+                        {context => {
+                          return (
+                            <Fragment>
+                              {context.setAddedUser(data.addUser)}
+                              <Redirect to="/users/add/success" />
+                            </Fragment>
+                          )
+                        }}
+                      </MyContext.Consumer>
+                    ) : (
+                      <Button
+                        variant="raised"
+                        color="primary"
+                        onClick={e => {
+                          e.preventDefault()
+                          addUser({
+                            variables: {
+                              input: { firstName, lastName, email }
+                            }
+                          })
+                        }}
+                      >
+                        Add User
+                      </Button>
+                    )}
+                    <Button color="primary" component={Link} to="/">
+                      Home
+                    </Button>
+                  </CardActions>
+                </Card>
               </form>
             </Fragment>
           )

@@ -13,6 +13,7 @@ const UserSchema = mongoose.Schema({
   auth0: String,
   status: String,
   role: String,
+  createdAt: Date,
   location: {
     address: String,
     details: {
@@ -20,6 +21,11 @@ const UserSchema = mongoose.Schema({
       ref: "Location"
     }
   }
+})
+
+UserSchema.pre("save", function(next) {
+  if (!this.createdAt) this.createdAt = new Date()
+  next()
 })
 
 const JobSchema = mongoose.Schema({

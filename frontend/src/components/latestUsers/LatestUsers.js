@@ -39,7 +39,7 @@ const styles = theme => ({
 
 const LatestUsers = ({ classes }) => {
   return (
-    <Query query={ALLUSERS} variables={{ limit: 100, skip: 0 }}>
+    <Query query={ALLUSERS} variables={{ limit: 10, skip: 0 }}>
       {({ loading, error, data: { allUsers } }) => {
         if (loading) return "Loading..."
         else if (error) {
@@ -61,8 +61,8 @@ const LatestUsers = ({ classes }) => {
           return (
             <Fragment>
               <Card className={classes.card}>
-                <Typography variant="title">Neuste Nutzer:</Typography>
                 <CardContent>
+                  <Typography variant="title">Neuste Nutzer:</Typography>
                   {allUsers.map(user => (
                     <Fragment key={user.id}>
                       <Typography variant="subheading">

@@ -70,7 +70,6 @@ const ProfileQueryWrapper = props => (
           </Fragment>
         )
       }
-      console.log("profileQueryWrapper data: ", data)
       if (!localStorage.getItem("profileToken")) {
         localStorage.setItem("profileToken", data.me.profileToken)
       }

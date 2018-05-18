@@ -15,6 +15,7 @@ import Landing from "../landing/Landing"
 import ErrorComponent from "../error/Error"
 import Header from "../header/Header"
 import AddUser from "../addUser/AddUser"
+import AddedUser from "../addedUser/AddedUser"
 
 import logo from "../../bgLogo.svg"
 
@@ -46,6 +47,7 @@ class App extends Component {
     this.state = {
       isLoggedIn: !!localStorage.getItem("idToken"),
       error: null,
+      addedUser: undefined,
       firstLogin: true
     }
     this.logout = this.logout.bind(this)
@@ -59,6 +61,12 @@ class App extends Component {
   setError(e) {
     this.setState({
       error: e
+    })
+  }
+  setAddedUser = user => {
+    console.log("setAddedUser", user)
+    this.setState({
+      addedUser: user
     })
   }
   login = async () => {
@@ -116,6 +124,7 @@ class App extends Component {
         value={{
           state: this.state,
           setError: this.setError,
+          setAddedUser: this.setAddedUser,
           login: this.login
         }}
       >
@@ -133,7 +142,12 @@ class App extends Component {
           />
           <Switch>
             <PrivateRoute exact path="/profile" component={Profile} />
-            <PrivateRoute path="/users/add" component={AddUser} />
+            <PrivateRoute exact path="/users/add" component={AddUser} />
+            <PrivateRoute
+              exact
+              path="/users/add/success"
+              component={AddedUser}
+            />
             <PrivateRoute exact path="/callback" component={Callback} />
             <Route exact path="/error" component={ErrorComponent} />
             <Route

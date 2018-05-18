@@ -17,7 +17,7 @@ const { getMessageList, sendMessage } = require("../utils/gmail")
 const privateProfileKey = process.env.PRIVATEUSERKEY
 const publicProfileKey = process.env.PUBLICUSERKEY
 
-isAdmin = user => (user ? user.role === "admin" : false)
+const isAdmin = user => (user ? user.role === "admin" : false)
 
 // const aggregateLocations = (collection, lng, lat, distance, order) => {
 //     let collectionSingular = collection
@@ -130,7 +130,7 @@ const resolvers = {
     },
     user(_, args, { profileToken, user }) {
       try {
-        return user.role === "admin" ? User.findOne(args) : {}
+        return isAdmin(user) ? User.findOne(args) : {}
       } catch (err) {
         const e = new CustomError({
           message: "user query resolver error",
@@ -143,10 +143,15 @@ const resolvers = {
         return e
       }
     },
-    async allUsers(_, { limit = 100, skip = 0 }, { profileToken, user }) {
+    async allUsers(
+      _,
+      { limit = 100, skip = 0, sort = { category: "createdAt", order: -1 } },
+      { profileToken, user }
+    ) {
       try {
-        return user.role === "admin"
+        return isAdmin(user)
           ? User.find()
+              .sort({ [sort.category]: sort.order })
               .limit(limit)
               .skip(skip)
           : [{}]

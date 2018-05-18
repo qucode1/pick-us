@@ -32,31 +32,41 @@ const styles = theme => ({
   }
 })
 
-const AddedUser = ({ classes, user: { firstName, lastName, id } = {} }) => (
+const AddedUser = ({ classes }) => (
   <Fragment>
-    <Card className={classes.card}>
-      <CardContent>
-        <Typography variant="subheading" className={classes.message}>
-          {firstName ? `${firstName} ${lastName}` : "User"} successfully added!
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button
-          variant="raised"
-          color="primary"
-          component={Link}
-          to="/users/add"
-        >
-          Add Another User
-        </Button>
-        <Button color="primary" component={Link} to={`/users/${id}`}>
-          User Profile
-        </Button>
-        <Button color="primary" component={Link} to="/">
-          Home
-        </Button>
-      </CardActions>
-    </Card>
+    <Typography variant="display1" className={classes.heading}>
+      User Added
+    </Typography>
+    <MyContext.Consumer>
+      {({
+        state: { addedUser: { firstName, lastName, id } = {}, setAddedUser }
+      }) => (
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography variant="subheading" className={classes.message}>
+              {firstName ? `${firstName} ${lastName}` : "User"} successfully
+              added!
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              variant="raised"
+              color="primary"
+              component={Link}
+              to="/users/add"
+            >
+              Add Another User
+            </Button>
+            <Button color="primary" component={Link} to={`/users/${id}`}>
+              User Profile
+            </Button>
+            <Button color="primary" component={Link} to="/">
+              Home
+            </Button>
+          </CardActions>
+        </Card>
+      )}
+    </MyContext.Consumer>
   </Fragment>
 )
 
