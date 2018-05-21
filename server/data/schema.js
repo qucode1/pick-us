@@ -11,13 +11,22 @@ const typeDefs = `
     allJobs: [Job]
     nearbyJobs(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyJob]
     nearbyUsers(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyUser]
-    emails: String
+    emails(userId: String, q: GmailQueryInput): EmailData
     sendEmail: sendEmailResponse
   }
   type sendEmailResponse {
     status: Int,
     statusText: String
-  } 
+  }
+  type Message {
+    id: String,
+    threadId: String
+  }
+  type EmailData {
+    messages: [Message],
+    nextPageToken: String,
+    resultSizeEstimate: Int
+  }
   type Me {
     id: String
     firstName: String
@@ -71,6 +80,12 @@ const typeDefs = `
   input SortInput {
     category: String!
     order: Int!
+  }
+  input GmailQueryInput {
+    email: String,
+    includeSentEmails: Boolean,
+    hasAttachment: Boolean,
+    alternativeQuery: String
   }
   input UserInput {
     firstName: String!

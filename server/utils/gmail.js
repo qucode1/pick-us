@@ -3,23 +3,28 @@ const gmail = google.gmail("v1")
 const { Base64 } = require("js-base64")
 
 const key = require("../gsuiteServiceAccount.json")
-const userId = "yannick@qucode.eu"
+const gmailUserId = "yannick@qucode.eu"
 
 const jwtClient = new google.auth.JWT(
   key.client_email,
   null,
   key.private_key,
   ["https://mail.google.com/"],
-  userId
+  gmailUserId
 )
 
-exports.getMessageList = async data => {
+exports.getMessageList = async (
+  userId = "yannick@qucode.eu",
+  q = "",
+  pageToken = 1
+) => {
   try {
     await jwtClient.authorize()
     return await gmail.users.messages.list({
       auth: jwtClient,
-      userId: userId,
-      labelIds: "INBOX"
+      userId,
+      // labelIds: "INBOX",
+      q
     })
   } catch (err) {
     throw err

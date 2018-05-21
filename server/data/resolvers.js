@@ -103,14 +103,58 @@ const resolvers = {
         return e
       }
     },
-    async emails(_, args, ctx) {
+    async emails(
+      _,
+      {
+        userId,
+        q: {
+          email = "",
+          hasAttachment = false,
+          includeSentEmails = false,
+          alternativeQuery = ""
+        } = {}
+      },
+      ctx
+    ) {
       try {
-        const messages = await getMessageList()
-        console.log("emails resolver", messages.data.messages)
-        return "success"
+        const defaultQuery = `(${email} from:info@qucode.eu to:info@qucode.eu in:anywhere${
+          hasAttachment ? " has:attachment" : ""
+        }) OR (from:${email} in:anywhere${
+          hasAttachment ? " has:attachment" : ""
+        })`
+
+        const includeSentEmailsQuery = `(${email} from:info@qucode.eu to:info@qucode.eu in:anywhere${
+          hasAttachment ? " has:attachment" : ""
+        }) OR (from:${email} in:anywhere${
+          hasAttachment ? " has:attachment" : ""
+        }) OR (to:${email} in:sent${hasAttachment ? " has:attachment" : ""})`
+
+        let query = ""
+        switch (true) {
+          case !!alternativeQuery:
+            query = alternativeQuery
+            break
+          case includeSentEmails:
+            query = includeSentEmailsQuery
+            break
+          case !!email:
+            query = defaultQuery
+            break
+          default:
+            break
+        }
+        const messages = await getMessageList(userId, query)
+        return messages.data
       } catch (err) {
-        console.error("emails resolver", err)
-        return "Failure"
+        console.error("emails resolver error", err)
+        const e = new CustomError({
+          message: "emails resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
+        return e
       }
     },
     async sendEmail(_, args, ctx) {
