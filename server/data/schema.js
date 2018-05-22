@@ -20,12 +20,58 @@ const typeDefs = `
   }
   type Message {
     id: String,
-    threadId: String
+    threadId: String,
+    messageDetails: MessageDetails,
+    decoded: DecodedMessage
+  }
+  type DecodedMessage {
+    id: String,
+    to: String,
+    from: String,
+    subject: String,
+    date: String,
+    message: String
+  }
+  type MessageDetails {
+    id: String,
+    threadId: String,
+    labelIds: [String],
+    snippet: String,
+    historyId: Int,
+    internalDate: Int,
+    payload: MessagePayload,
+    sizeEstimate: Int,
+    raw: String
+  }
+  type MessagePayload {
+    partId: String,
+    mimeType: String,
+    filename: String,
+    headers: [MessagePayloadHeader],
+    body: MessageAttachment,
+    parts: [MessagePayloadPart]
+  }
+  type MessagePayloadHeader {
+    name: String,
+    value: String
+  }
+  type MessageAttachment {
+    attachmentId: String,
+    size: Int,
+    data: String
   }
   type EmailData {
     messages: [Message],
     nextPageToken: String,
     resultSizeEstimate: Int
+  }
+  type MessagePayloadPart {
+    partId: String,
+    fileName: String,
+    mimeType: String,
+    headers: [MessagePayloadHeader],
+    body: MessageAttachment
+    parts: [MessagePayloadPart]
   }
   type Me {
     id: String

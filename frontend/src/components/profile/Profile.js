@@ -1,39 +1,11 @@
 import React, { Fragment, Component } from "react"
-import { Link, Redirect } from "react-router-dom"
-import { Query, Mutation } from "react-apollo"
-import gql from "graphql-tag"
+import { Link } from "react-router-dom"
 
-import { MyContext } from "../../utils/contextProvider"
 import { withStyles } from "material-ui/styles"
 import Card, { CardActions, CardContent } from "material-ui/Card"
 import Typography from "material-ui/Typography"
 import TextField from "material-ui/TextField"
 import Button from "material-ui/Button"
-
-const ME = gql`
-  {
-    me {
-      id
-      firstName
-      lastName
-      email
-      auth0
-      role
-    }
-  }
-`
-const UPDATE_ME = gql`
-  mutation updateMe($input: UserInput!) {
-    updateMe(input: $input) {
-      id
-      firstName
-      lastName
-      email
-      role
-      auth0
-    }
-  }
-`
 
 const styles = theme => ({
   card: {
@@ -50,75 +22,6 @@ const styles = theme => ({
   }
 })
 
-const ProfileQueryWrapper = props => (
-  <Query query={ME}>
-    {({ loading, error, data }) => {
-      if (loading) return "Loading..."
-      if (error) {
-        return (
-          <Fragment>
-            <MyContext.Consumer>
-              {context => {
-                return (
-                  <Fragment>
-                    {context.setError(error)}
-                    <Redirect to="/error" />
-                  </Fragment>
-                )
-              }}
-            </MyContext.Consumer>
-          </Fragment>
-        )
-      }
-      if (!localStorage.getItem("profileToken")) {
-        localStorage.setItem("profileToken", data.me.profileToken)
-      }
-      return <StyledProfile {...props} {...data.me} />
-    }}
-  </Query>
-)
-
-const ProfileMutationWrapper = props => (
-  <Mutation
-    mutation={UPDATE_ME}
-    // update={(cache, { data: { updateMe } }) => {
-    //   const { me } = cache.readQuery({ query: ME })
-    //   console.dir({ ...me, ...updateMe })
-    //   cache.writeQuery({
-    //     query: ME,
-    //     data: {
-    //       me: {
-    //         ...me,
-    //         firstName: updateMe.firstName,
-    //         lastName: updateMe.lastName,
-    //         email: updateMe.email,
-    //         __typename: updateMe.__typename
-    //       }
-    //     }
-    //   })
-    // }}
-  >
-    {(updateMe, { loading, error, data }) => {
-      if (loading) return <h3>Loading...</h3>
-      else if (error)
-        return (
-          <MyContext.Consumer>
-            {context => {
-              return (
-                <Fragment>
-                  {context.setError(error)}
-                  <Redirect to="/error" />
-                </Fragment>
-              )
-            }}
-          </MyContext.Consumer>
-        )
-      else if (data)
-        return <ProfileQueryWrapper {...props} updateMe={updateMe} />
-      else return <ProfileQueryWrapper {...props} updateMe={updateMe} />
-    }}
-  </Mutation>
-)
 class Profile extends Component {
   constructor(props) {
     super(props)
@@ -207,4 +110,4 @@ class Profile extends Component {
 
 const StyledProfile = withStyles(styles)(Profile)
 
-export default ProfileMutationWrapper
+export default StyledProfile

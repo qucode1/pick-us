@@ -12,7 +12,13 @@ const {
   DuplicateUserError
 } = require("../utils/customErrors")
 
-const { getMessageList, sendMessage } = require("../utils/gmail")
+const { createProfileToken } = require("../utils/auth")
+const {
+  getMessageList,
+  sendMessage,
+  getMessage,
+  getDecodedMessage
+} = require("../utils/gmail")
 
 const privateProfileKey = process.env.PRIVATEUSERKEY
 const publicProfileKey = process.env.PUBLICUSERKEY
@@ -258,7 +264,14 @@ const resolvers = {
     id(user) {
       return user._id
     },
-    profileToken(user, args, { profileToken }) {
+    async profileToken(_, args, { user, profileToken }) {
+      const currentUser = await User.findById(user._id).lean()
+      if (JSON.stringify(user) !== JSON.stringify(currentUser)) {
+        const newProfileToken = createProfileToken(currentUser, {
+          exp: Date.now() + 24 * 60 * 60 * 1000
+        })
+        return newProfileToken
+      }
       return profileToken
     },
     publicKey() {
@@ -268,6 +281,20 @@ const resolvers = {
   User: {
     id(user) {
       return user._id
+    }
+  },
+  Message: {
+    async messageDetails(message) {
+      // console.log("Message message", message)
+      const result = await getMessage({ id: message.id })
+      return result.data
+    },
+    decoded(obj, args, context, info) {
+      // console.dir(info.fieldNodes[0].selectionSet.loc)
+      // console.dir(args)
+      // console.dir(context)
+      // console.dir(info)
+      return getDecodedMessage({ id: obj.id })
     }
   },
   // Job: {

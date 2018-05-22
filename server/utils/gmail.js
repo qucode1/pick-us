@@ -13,11 +13,7 @@ const jwtClient = new google.auth.JWT(
   gmailUserId
 )
 
-exports.getMessageList = async (
-  userId = "yannick@qucode.eu",
-  q = "",
-  pageToken = 1
-) => {
+const getMessageList = async (userId = gmailUserId, q = "", pageToken = 1) => {
   try {
     await jwtClient.authorize()
     return await gmail.users.messages.list({
@@ -31,6 +27,71 @@ exports.getMessageList = async (
   }
 }
 
+const getMessage = async ({
+  userId = gmailUserId,
+  id = "",
+  format = "full"
+}) => {
+  try {
+    await jwtClient.authorize()
+    return await gmail.users.messages.get({
+      auth: jwtClient,
+      userId,
+      id
+    })
+  } catch (err) {
+    throw err
+  }
+}
+
+const getDecodedMessage = async ({
+  userId = gmailUserId,
+  id = "",
+  format = "full"
+}) => {
+  try {
+    const {
+      data: { payload }
+    } = await getMessage({ id, userId, format })
+    // console.log("payload", payload)
+    const decoded = payload.headers.reduce((result, header) => {
+      switch (true) {
+        case header.name === "To":
+        case header.name === "From":
+        case header.name === "Date":
+        case header.name === "Subject":
+          result[header.name.toLowerCase()] = header.value
+          break
+        default:
+          break
+      }
+      return result
+    }, {})
+    decoded.id = id
+    // console.log("payload parts", payload.parts)
+    decoded.message = Base64.decode(
+      payload.parts.reduce((result, part) => {
+        // console.log("part", part)
+        if (part.mimeType === "text/plain") {
+          result = part.body.data
+        } else if (part.mimeType.startsWith("multipart")) {
+          result = part.parts.reduce((innerResult, innerPart) => {
+            if (innerPart.mimeType === "text/plain") {
+              innerResult = innerPart.body.data
+            }
+            return innerResult
+          }, "")
+        }
+        return result
+      }, "")
+    )
+    // console.log("decoded", decoded)
+    return decoded
+  } catch (err) {
+    throw err
+  }
+}
+
 const createString = email => `From: qucode info <${email.from}>
 To: <${email.to}>
 Subject: ${email.subject}
@@ -39,7 +100,7 @@ ${email.message}`
 
 const encodeString = string => Base64.encodeURI(string)
 
-exports.sendMessage = async ({
+const sendMessage = async ({
   from = "info@qucode.eu",
   to = "quinius_789@yahoo.de",
   subject = "testing gmail api",
@@ -65,4 +126,11 @@ exports.sendMessage = async ({
   } catch (err) {
     throw err
   }
+}
+
+module.exports = {
+  getMessage,
+  getMessageList,
+  getDecodedMessage,
+  sendMessage
 }

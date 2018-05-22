@@ -10,7 +10,7 @@ import PrivateRoute from "../../utils/PrivateRoute"
 
 import Callback from "../callback/Callback"
 import Dashboard from "../dashboard/Dashboard"
-import Profile from "../profile/Profile"
+import MyProfile from "../myProfile/myProfile"
 import Landing from "../landing/Landing"
 import ErrorComponent from "../error/Error"
 import Header from "../header/Header"
@@ -141,7 +141,7 @@ class App extends Component {
             component={this.state.isLoggedIn ? Dashboard : Landing}
           />
           <Switch>
-            <PrivateRoute exact path="/profile" component={Profile} />
+            <PrivateRoute exact path="/profile" component={MyProfile} />
             <PrivateRoute exact path="/users/add" component={AddUser} />
             <PrivateRoute
               exact
