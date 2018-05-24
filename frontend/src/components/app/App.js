@@ -23,12 +23,13 @@ import { withStyles } from "material-ui/styles"
 
 const styles = theme => ({
   root: {
-    height: "100vH",
+    height: "100%",
+    minHeight: "100vH",
     backgroundColor: "rgba(61, 110, 191, .05)"
   },
   background: {
     position: "absolute",
-    height: "100vH",
+    height: "100%",
     width: "100vW",
     zIndex: "-1",
     backgroundImage: `url("${logo}")`,

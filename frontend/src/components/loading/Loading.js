@@ -1,10 +1,11 @@
 import React from "react"
 
 import { withStyles } from "material-ui/styles"
+import Typography from "material-ui/Typography"
 
 const styles = theme => ({
   root: {
-    position: "absolute",
+    position: "relative",
     width: "100%",
     height: "100%",
     display: "flex",
@@ -16,7 +17,7 @@ const styles = theme => ({
 
 const Loading = ({ classes }) => (
   <div className={classes.root}>
-    <p>Loading...</p>
+    <Typography variant="subheading">Loading...</Typography>
   </div>
 )
 

@@ -11,6 +11,7 @@ import Button from "material-ui/Button"
 import TextField from "material-ui/TextField"
 
 import Loading from "../loading/Loading"
+import EmailHistory from "../emailHistory/EmailHistory"
 
 import { ADDUSER } from "../../mutations/user"
 import { EMAILHISTORY } from "../../queries/email"
@@ -18,8 +19,8 @@ import { ALLUSERS } from "../../queries/user"
 
 const styles = theme => ({
   card: {
-    position: "relative",
-    margin: "auto",
+    // position: "relative",
+    margin: `${theme.spacing.unit * 2}px auto`,
     width: "75%",
     maxWidth: "800px",
     [theme.breakpoints.down("md")]: {
@@ -31,17 +32,6 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2
   }
 })
-
-const EmailHistory = ({ messages, fetchingEmails }) => (
-  <div style={{ position: "relative", minHeight: "50px" }}>
-    {messages &&
-      messages.length > 0 &&
-      messages.map(message => (
-        <p key={message.decoded.id}>{message.decoded.subject}</p>
-      ))}
-    {fetchingEmails && <Loading />}
-  </div>
-)
 
 class AddUser extends Component {
   constructor(props) {
@@ -165,10 +155,6 @@ class AddUser extends Component {
                           onChange={this.handleChange}
                           margin="normal"
                         />
-                        <EmailHistory
-                          fetchingEmails={this.state.fetchingEmails}
-                          messages={this.state.messages}
-                        />
                       </Fragment>
                     )}
                   </CardContent>
@@ -206,6 +192,10 @@ class AddUser extends Component {
                   </CardActions>
                 </Card>
               </form>
+              <EmailHistory
+                fetchingEmails={this.state.fetchingEmails}
+                messages={this.state.messages}
+              />
             </Fragment>
           )
         }}
