@@ -1,6 +1,5 @@
 import React, { Fragment } from "react"
 import { Query } from "react-apollo"
-import gql from "graphql-tag"
 import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
@@ -58,13 +57,10 @@ const Dashboard = props => {
           } else
             response = (
               <Fragment>
-                <Typography
-                  className={props.classes.heading}
-                  variant="display1"
-                >
+                <Typography className={classes.heading} variant="display1">
                   Dashboard
                 </Typography>
-                <Card className={props.classes.card}>
+                <Card className={classes.card}>
                   <CardContent>
                     <Typography variant="title">
                       {data.me.firstName} {data.me.lastName}

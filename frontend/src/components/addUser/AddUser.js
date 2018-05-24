@@ -1,7 +1,6 @@
 import React, { Fragment, Component } from "react"
-import { Query, Mutation, withApollo } from "react-apollo"
-import gql from "graphql-tag"
-import { Link, Redirect, Route } from "react-router-dom"
+import { Mutation, withApollo } from "react-apollo"
+import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
@@ -15,6 +14,7 @@ import Loading from "../loading/Loading"
 
 import { ADDUSER } from "../../mutations/user"
 import { EMAILHISTORY } from "../../queries/email"
+import { ALLUSERS } from "../../queries/user"
 
 const styles = theme => ({
   card: {
@@ -33,36 +33,6 @@ const styles = theme => ({
 })
 
 const EmailHistory = ({ messages, fetchingEmails }) => (
-  // <Query
-  //   query={EMAILHISTORY}
-  //   variables={{ q: { email, includeSentEmails: true } }}
-  // >
-  //   {({ loading, error, data }) => {
-  //     if (loading) return <Loading />
-  //     else if (error) {
-  //       return (
-  //         <MyContext.Consumer>
-  //           {context => (
-  //             <Fragment>
-  //               {context.setError(error)}
-  //               <Redirect to="/error" />
-  //             </Fragment>
-  //           )}
-  //         </MyContext.Consumer>
-  //       )
-  //     } else {
-  //       return (
-  //         <Fragment>
-  //           {data.emails &&
-  //             data.emails.messages &&
-  //             data.emails.messages.map(message => (
-  //               <p key={message.decoded.id}>{message.decoded.subject}</p>
-  //             ))}
-  //         </Fragment>
-  //       )
-  //     }
-  //   }}
-  // </Query>
   <div style={{ position: "relative", minHeight: "50px" }}>
     {messages &&
       messages.length > 0 &&
@@ -83,7 +53,6 @@ class AddUser extends Component {
       messages: [],
       fetchingEmails: false
     }
-    this.emailTimeout
   }
   handleChange = ({ target: { name, value } }) => {
     this.setState(
@@ -129,30 +98,12 @@ class AddUser extends Component {
         mutation={ADDUSER}
         update={(cache, { data: { addUser } }) => {
           const { allUsers } = cache.readQuery({
-            query: gql`
-              query allUsers {
-                allUsers(limit: 10, skip: 0) {
-                  id
-                  firstName
-                  lastName
-                  email
-                  role
-                }
-              }
-            `
+            query: ALLUSERS,
+            variables: { limit: 5, skip: 0 }
           })
           cache.writeQuery({
-            query: gql`
-              query allUsers {
-                allUsers(limit: 10, skip: 0) {
-                  id
-                  firstName
-                  lastName
-                  email
-                  role
-                }
-              }
-            `,
+            query: ALLUSERS,
+            variables: { limit: 5, skip: 0 },
             data: {
               allUsers: [addUser, ...allUsers]
             }

@@ -1,6 +1,5 @@
 import React, { Fragment } from "react"
 import { Query } from "react-apollo"
-import gql from "graphql-tag"
 import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
@@ -29,7 +28,7 @@ const styles = theme => ({
 
 const LatestUsers = ({ classes }) => {
   return (
-    <Query query={ALLUSERS} variables={{ limit: 10, skip: 0 }}>
+    <Query query={ALLUSERS} variables={{ limit: 5, skip: 0 }}>
       {({ loading, error, data: { allUsers } }) => {
         if (loading) return "Loading..."
         else if (error) {

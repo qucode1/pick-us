@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react"
 import { Redirect, Link } from "react-router-dom"
 import { Query } from "react-apollo"
-import gql from "graphql-tag"
 
 import Loading from "../loading/Loading"
 

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react"
-import { Link, Redirect } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
@@ -7,10 +7,7 @@ import { withStyles } from "material-ui/styles"
 import Typography from "material-ui/Typography"
 import Card, { CardActions, CardContent } from "material-ui/Card"
 import Button from "material-ui/Button"
-import TextField from "material-ui/TextField"
 import lightGreen from "material-ui/colors/lightGreen"
-
-import Loading from "../loading/Loading"
 
 const success = lightGreen[500]
 

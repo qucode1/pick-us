@@ -1,7 +1,6 @@
 import React, { Fragment } from "react"
 import { Redirect } from "react-router-dom"
 import { Query, Mutation } from "react-apollo"
-import gql from "graphql-tag"
 
 import { MyContext } from "../../utils/contextProvider"
 
