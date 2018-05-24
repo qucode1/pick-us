@@ -12,18 +12,7 @@ import Button from "material-ui/Button"
 
 import LatestUsers from "../latestUsers/LatestUsers"
 
-const ME = gql`
-  {
-    me {
-      id
-      firstName
-      lastName
-      email
-      auth0
-      role
-    }
-  }
-`
+import { ME } from "../../queries/me"
 
 const styles = theme => ({
   card: {

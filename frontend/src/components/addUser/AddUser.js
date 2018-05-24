@@ -1,5 +1,5 @@
 import React, { Fragment, Component } from "react"
-import { Mutation } from "react-apollo"
+import { Query, Mutation, withApollo } from "react-apollo"
 import gql from "graphql-tag"
 import { Link, Redirect, Route } from "react-router-dom"
 
@@ -12,18 +12,10 @@ import Button from "material-ui/Button"
 import TextField from "material-ui/TextField"
 
 import Loading from "../loading/Loading"
-import AddedUser from "../addedUser/AddedUser"
 
-const ADDUSER = gql`
-  mutation addUser($input: UserInput!) {
-    addUser(input: $input) {
-      id
-      firstName
-      lastName
-      email
-    }
-  }
-`
+import { ADDUSER } from "../../mutations/user"
+import { EMAILHISTORY } from "../../queries/email"
+
 const styles = theme => ({
   card: {
     position: "relative",
@@ -39,6 +31,39 @@ const styles = theme => ({
     margin: theme.spacing.unit * 2
   }
 })
+
+const EmailHistory = ({ email }) => (
+  <Query
+    query={EMAILHISTORY}
+    variables={{ q: { email, includeSentEmails: true } }}
+  >
+    {({ loading, error, data }) => {
+      if (loading) return <Loading />
+      else if (error) {
+        return (
+          <MyContext.Consumer>
+            {context => (
+              <Fragment>
+                {context.setError(error)}
+                <Redirect to="/error" />
+              </Fragment>
+            )}
+          </MyContext.Consumer>
+        )
+      } else {
+        return (
+          <Fragment>
+            {data.emails &&
+              data.emails.messages &&
+              data.emails.messages.map(message => (
+                <p key={message.decoded.id}>{message.decoded.subject}</p>
+              ))}
+          </Fragment>
+        )
+      }
+    }}
+  </Query>
+)
 
 class AddUser extends Component {
   constructor(props) {
@@ -147,6 +172,7 @@ class AddUser extends Component {
                           onChange={this.handleChange}
                           margin="normal"
                         />
+                        <EmailHistory email={this.state.email} />
                       </Fragment>
                     )}
                   </CardContent>
@@ -192,4 +218,4 @@ class AddUser extends Component {
   }
 }
 
-export default withStyles(styles)(AddUser)
+export default withApollo(withStyles(styles)(AddUser))

@@ -17,15 +17,7 @@ import Menu, { MenuItem } from "material-ui/Menu"
 
 // import pickUsLogo from "../../logo.svg"
 
-const ME = gql`
-  {
-    me {
-      id
-      firstName
-      lastName
-    }
-  }
-`
+import { MYNAME } from "../../queries/me"
 
 const styles = theme => ({
   root: {
@@ -72,7 +64,7 @@ class Header extends Component {
     return (
       <Fragment>
         {isLoggedIn ? (
-          <Query query={ME}>
+          <Query query={MYNAME}>
             {({ loading, error, data }) => {
               if (loading) return <Loading />
               else if (error) {

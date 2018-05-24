@@ -10,17 +10,7 @@ import Typography from "material-ui/Typography"
 import Card, { CardActions, CardContent } from "material-ui/Card"
 import Button from "material-ui/Button"
 
-const ALLUSERS = gql`
-  query allUsers($limit: Int, $skip: Int) {
-    allUsers(limit: $limit, skip: $skip) {
-      id
-      firstName
-      lastName
-      email
-      role
-    }
-  }
-`
+import { ALLUSERS } from "../../queries/user"
 
 const styles = theme => ({
   card: {

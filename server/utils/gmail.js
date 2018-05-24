@@ -70,20 +70,26 @@ const getDecodedMessage = async ({
     decoded.id = id
     // console.log("payload parts", payload.parts)
     decoded.message = Base64.decode(
-      payload.parts.reduce((result, part) => {
-        // console.log("part", part)
-        if (part.mimeType === "text/plain") {
-          result = part.body.data
-        } else if (part.mimeType.startsWith("multipart")) {
-          result = part.parts.reduce((innerResult, innerPart) => {
-            if (innerPart.mimeType === "text/plain") {
-              innerResult = innerPart.body.data
-            }
-            return innerResult
-          }, "")
-        }
-        return result
-      }, "")
+      payload.mimeType === "text/plain"
+        ? payload.body.data
+        : payload.parts
+          ? payload.parts.reduce((result, part) => {
+              // console.log("part", part)
+              if (part.mimeType === "text/plain") {
+                result = part.body.data
+              } else if (part.mimeType.startsWith("multipart")) {
+                result = part.parts.reduce((innerResult, innerPart) => {
+                  if (innerPart.mimeType === "text/plain") {
+                    innerResult = innerPart.body.data
+                  }
+                  return innerResult
+                }, "")
+              }
+              return result
+            }, "")
+          : payload.mimeType.startsWith("text")
+            ? payload.body.data
+            : ""
     )
     // console.log("decoded", decoded)
     return decoded

@@ -7,31 +7,8 @@ import { MyContext } from "../../utils/contextProvider"
 
 import Profile from "../profile/Profile"
 
-const ME = gql`
-  {
-    me {
-      id
-      firstName
-      lastName
-      email
-      auth0
-      role
-    }
-  }
-`
-const UPDATE_ME = gql`
-  mutation updateMe($input: UserInput!) {
-    updateMe(input: $input) {
-      id
-      firstName
-      lastName
-      email
-      role
-      auth0
-      profileToken
-    }
-  }
-`
+import { ME } from "../../queries/me"
+import { UPDATEME } from "../../mutations/me"
 
 const ProfileQueryWrapper = props => (
   <Query query={ME}>
@@ -63,7 +40,7 @@ const ProfileQueryWrapper = props => (
 
 const ProfileMutationWrapper = props => (
   <Mutation
-    mutation={UPDATE_ME}
+    mutation={UPDATEME}
     // update={(cache, { data: { updateMe } }) => {
     //   const { me } = cache.readQuery({ query: ME })
     //   console.dir({ ...me, ...updateMe })
