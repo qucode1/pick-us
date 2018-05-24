@@ -1,13 +1,13 @@
 import gql from "graphql-tag"
 
-export const NameFragment = gql`
-  fragment NameFragment on Me {
+export const MyNameFragment = gql`
+  fragment MyNameFragment on Me {
     firstName
     lastName
   }
 `
-export const AuthFragment = gql`
-  fragment AuthFragment on Me {
+export const MyAuthFragment = gql`
+  fragment MyAuthFragment on Me {
     auth0
     role
   }
@@ -15,11 +15,11 @@ export const AuthFragment = gql`
 export const FullProfileFragment = gql`
   fragment FullProfileFragment on Me {
     id
-    ...NameFragment
-    ...AuthFragment
+    ...MyNameFragment
+    ...MyAuthFragment
     email
     profileToken
   }
-  ${NameFragment}
-  ${AuthFragment}
+  ${MyNameFragment}
+  ${MyAuthFragment}
 `

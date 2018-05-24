@@ -32,37 +32,45 @@ const styles = theme => ({
   }
 })
 
-const EmailHistory = ({ email }) => (
-  <Query
-    query={EMAILHISTORY}
-    variables={{ q: { email, includeSentEmails: true } }}
-  >
-    {({ loading, error, data }) => {
-      if (loading) return <Loading />
-      else if (error) {
-        return (
-          <MyContext.Consumer>
-            {context => (
-              <Fragment>
-                {context.setError(error)}
-                <Redirect to="/error" />
-              </Fragment>
-            )}
-          </MyContext.Consumer>
-        )
-      } else {
-        return (
-          <Fragment>
-            {data.emails &&
-              data.emails.messages &&
-              data.emails.messages.map(message => (
-                <p key={message.decoded.id}>{message.decoded.subject}</p>
-              ))}
-          </Fragment>
-        )
-      }
-    }}
-  </Query>
+const EmailHistory = ({ messages, fetchingEmails }) => (
+  // <Query
+  //   query={EMAILHISTORY}
+  //   variables={{ q: { email, includeSentEmails: true } }}
+  // >
+  //   {({ loading, error, data }) => {
+  //     if (loading) return <Loading />
+  //     else if (error) {
+  //       return (
+  //         <MyContext.Consumer>
+  //           {context => (
+  //             <Fragment>
+  //               {context.setError(error)}
+  //               <Redirect to="/error" />
+  //             </Fragment>
+  //           )}
+  //         </MyContext.Consumer>
+  //       )
+  //     } else {
+  //       return (
+  //         <Fragment>
+  //           {data.emails &&
+  //             data.emails.messages &&
+  //             data.emails.messages.map(message => (
+  //               <p key={message.decoded.id}>{message.decoded.subject}</p>
+  //             ))}
+  //         </Fragment>
+  //       )
+  //     }
+  //   }}
+  // </Query>
+  <div style={{ position: "relative", minHeight: "50px" }}>
+    {messages &&
+      messages.length > 0 &&
+      messages.map(message => (
+        <p key={message.decoded.id}>{message.decoded.subject}</p>
+      ))}
+    {fetchingEmails && <Loading />}
+  </div>
 )
 
 class AddUser extends Component {
@@ -71,14 +79,48 @@ class AddUser extends Component {
     this.state = {
       firstName: "",
       lastName: "",
-      email: ""
+      email: "",
+      messages: [],
+      fetchingEmails: false
     }
+    this.emailTimeout
   }
   handleChange = ({ target: { name, value } }) => {
-    this.setState({
-      [name]: value
-    })
+    this.setState(
+      oldState => ({
+        [name]: value
+      }),
+      () => {
+        if (value) {
+          if (name === "email") {
+            clearTimeout(this.emailTimeout)
+            this.emailTimeout = setTimeout(this.getMatchingEmails, 500)
+          }
+        } else {
+          clearTimeout(this.emailTimeout)
+          this.setState({ messages: [] })
+        }
+      }
+    )
   }
+
+  getMatchingEmails = () => {
+    this.setState(
+      () => ({
+        fetchingEmails: true
+      }),
+      async () => {
+        const {
+          data: { emails: { messages } }
+        } = await this.props.client.query({
+          query: EMAILHISTORY,
+          variables: { q: { email: this.state.email, includeSentEmails: true } }
+        })
+        this.setState({ messages, fetchingEmails: false })
+      }
+    )
+  }
+
   render() {
     const { classes } = this.props
     const { firstName, lastName, email } = this.state
@@ -172,7 +214,10 @@ class AddUser extends Component {
                           onChange={this.handleChange}
                           margin="normal"
                         />
-                        <EmailHistory email={this.state.email} />
+                        <EmailHistory
+                          fetchingEmails={this.state.fetchingEmails}
+                          messages={this.state.messages}
+                        />
                       </Fragment>
                     )}
                   </CardContent>

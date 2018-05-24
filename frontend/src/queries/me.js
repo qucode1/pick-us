@@ -1,8 +1,8 @@
 import gql from "graphql-tag"
 
 import {
-  NameFragment,
-  AuthFragment,
+  MyNameFragment,
+  MyAuthFragment,
   FullProfileFragment
 } from "../fragments/me"
 
@@ -11,21 +11,21 @@ export const ME = gql`
     me {
       id
       email
-      ...NameFragment
-      ...AuthFragment
+      ...MyNameFragment
+      ...MyAuthFragment
     }
   }
-  ${NameFragment}
-  ${AuthFragment}
+  ${MyNameFragment}
+  ${MyAuthFragment}
 `
 export const MYNAME = gql`
   query myName {
     me {
       id
-      ...NameFragment
+      ...MyNameFragment
     }
   }
-  ${NameFragment}
+  ${MyNameFragment}
 `
 export const MYFULLPROFILE = gql`
   query myFullProfile {
