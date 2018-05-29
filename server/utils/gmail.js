@@ -1,6 +1,9 @@
 const { google } = require("googleapis")
 const gmail = google.gmail("v1")
+const drive = google.drive("v3")
 const { Base64 } = require("js-base64")
+const fs = require("fs")
+const { promisify } = require("util")
 
 const key = require("../gsuiteServiceAccount.json")
 const gmailUserId = "yannick@qucode.eu"
@@ -9,7 +12,7 @@ const jwtClient = new google.auth.JWT(
   key.client_email,
   null,
   key.private_key,
-  ["https://mail.google.com/"],
+  ["https://mail.google.com/", "https://www.googleapis.com/auth/drive"],
   gmailUserId
 )
 
@@ -98,6 +101,56 @@ const getDecodedMessage = async ({
   }
 }
 
+const getAttachment = async ({
+  attachmentId,
+  messageId,
+  userId = gmailUserId
+}) => {
+  try {
+    console.log("messageId", messageId)
+    console.log("attachmentId", attachmentId)
+    await jwtClient.authorize()
+    const attachment = gmail.users.messages.attachments.get({
+      auth: jwtClient,
+      id: attachmentId,
+      messageId,
+      userId
+    })
+    return attachment
+  } catch (err) {
+    throw err
+  }
+}
+
+const uploadFile = async ({ data, fileName, mimeType, id }) => {
+  try {
+    // console.log("fileName", fileName)
+    // console.log("mimeType", mimeType)
+    const writeFile = promisify(fs.writeFile)
+    const unlink = promisify(fs.unlink)
+    await writeFile(`tempUploads/${fileName}`, data, "base64")
+    const fileMetadata = {
+      name: fileName
+    }
+    const media = {
+      mimeType,
+      body: fs.createReadStream(fileName)
+    }
+    await jwtClient.authorize()
+    const file = await drive.files.create({
+      auth: jwtClient,
+      media,
+      resource: fileMetadata,
+      fields: "id"
+    })
+    unlink(`tempUploads/${fileName}`)
+    // console.dir(file)
+    return file
+  } catch (err) {
+    throw err
+  }
+}
+
 const createString = email => `From: qucode info <${email.from}>
 To: <${email.to}>
 Subject: ${email.subject}
@@ -138,5 +191,7 @@ module.exports = {
   getMessage,
   getMessageList,
   getDecodedMessage,
-  sendMessage
+  getAttachment,
+  sendMessage,
+  uploadFile
 }

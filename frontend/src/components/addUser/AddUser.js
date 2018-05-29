@@ -50,34 +50,41 @@ class AddUser extends Component {
         [name]: value
       }),
       () => {
-        if (value) {
-          if (name === "email") {
+        if (name === "email") {
+          if (value) {
             clearTimeout(this.emailTimeout)
             this.emailTimeout = setTimeout(this.getMatchingEmails, 500)
+          } else {
+            clearTimeout(this.emailTimeout)
+            this.setState({ messages: [] })
           }
-        } else {
-          clearTimeout(this.emailTimeout)
-          this.setState({ messages: [] })
         }
       }
     )
   }
 
   getMatchingEmails = () => {
-    this.setState(
-      () => ({
-        fetchingEmails: true
-      }),
-      async () => {
-        const {
-          data: { emails: { messages } }
-        } = await this.props.client.query({
-          query: EMAILHISTORY,
-          variables: { q: { email: this.state.email, includeSentEmails: true } }
-        })
-        this.setState({ messages, fetchingEmails: false })
-      }
-    )
+    try {
+      this.setState(
+        () => ({
+          fetchingEmails: true
+        }),
+        async () => {
+          const {
+            data: { emails: { messages } }
+          } = await this.props.client.query({
+            query: EMAILHISTORY,
+            variables: {
+              q: { email: this.state.email, includeSentEmails: true }
+            }
+          })
+          this.setState({ messages, fetchingEmails: false })
+        }
+      )
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
   }
 
   render() {

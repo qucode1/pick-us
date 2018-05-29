@@ -49,7 +49,8 @@ class App extends Component {
       isLoggedIn: !!localStorage.getItem("idToken"),
       error: null,
       addedUser: undefined,
-      firstLogin: true
+      firstLogin: true,
+      newUserEmailHistory: []
     }
     this.logout = this.logout.bind(this)
     this.setError = this.setError.bind(this)
@@ -67,6 +68,11 @@ class App extends Component {
   setAddedUser = user => {
     this.setState({
       addedUser: user
+    })
+  }
+  setNewUserEmailHistory = (emails = []) => {
+    this.setState({
+      newUserEmailHistory: emails
     })
   }
   login = async () => {
@@ -125,7 +131,8 @@ class App extends Component {
           state: this.state,
           setError: this.setError,
           setAddedUser: this.setAddedUser,
-          login: this.login
+          login: this.login,
+          setNewUserEmailHistory: this.setNewUserEmailHistory
         }}
       >
         <div className={this.props.classes.root}>

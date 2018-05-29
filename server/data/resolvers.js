@@ -17,7 +17,9 @@ const {
   getMessageList,
   sendMessage,
   getMessage,
-  getDecodedMessage
+  getDecodedMessage,
+  getAttachment,
+  uploadFile
 } = require("../utils/gmail")
 
 const privateProfileKey = process.env.PRIVATEUSERKEY
@@ -163,6 +165,28 @@ const resolvers = {
         return e
       }
     },
+    async emailAttachment(_, { attachmentId, messageId, userId }, ctx) {
+      try {
+        // console.log("messageId resolver", messageId)
+        // console.log("attachmentId resolver", attachmentId)
+        const attachment = await getAttachment({
+          attachmentId,
+          messageId,
+          userId
+        })
+        return attachment.data
+      } catch (err) {
+        console.error(err)
+        const e = new CustomError({
+          message: "emailAttachment query resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
+        return e
+      }
+    },
     async sendEmail(_, args, ctx) {
       try {
         const response = await sendMessage()
@@ -287,6 +311,7 @@ const resolvers = {
     async messageDetails(message) {
       // console.log("Message message", message)
       const result = await getMessage({ id: message.id })
+      // console.dir(result.data.payload.parts)
       return result.data
     },
     decoded(obj, args, context, info) {
@@ -369,6 +394,36 @@ const resolvers = {
             error
           }
         })
+      }
+    },
+    async uploadAttachmentToDrive(
+      _,
+      { attachmentId, messageId, fileName, mimeType, userId },
+      ctx
+    ) {
+      try {
+        const attachment = await getAttachment({
+          attachmentId,
+          messageId,
+          userId
+        })
+        const result = await uploadFile({
+          data: attachment.data.data,
+          fileName,
+          mimeType,
+          id: attachmentId
+        })
+        return result.data
+      } catch (err) {
+        console.error(err)
+        const e = new CustomError({
+          message: "uploadAttachmentToDrive mutation resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
+        return e
       }
     }
     // async createJob(_, { input, locations }, ctx) {

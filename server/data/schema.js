@@ -13,6 +13,7 @@ const typeDefs = `
     nearbyUsers(lng: Float!, lat: Float!, distance: Int, order: Int): [nearbyUser]
     emails(userId: String, q: GmailQueryInput): EmailData
     sendEmail: sendEmailResponse
+    emailAttachment(attachmentId: String!, messageId: String!, userId: String): MessageAttachment
   }
   type sendEmailResponse {
     status: Int,
@@ -37,8 +38,8 @@ const typeDefs = `
     threadId: String,
     labelIds: [String],
     snippet: String,
-    historyId: Int,
-    internalDate: Int,
+    historyId: String,
+    internalDate: String,
     payload: MessagePayload,
     sizeEstimate: Int,
     raw: String
@@ -67,7 +68,7 @@ const typeDefs = `
   }
   type MessagePayloadPart {
     partId: String,
-    fileName: String,
+    filename: String,
     mimeType: String,
     headers: [MessagePayloadHeader],
     body: MessageAttachment
@@ -123,6 +124,9 @@ const typeDefs = `
     address: String
     data: Location
   }
+  type DriveFile {
+    id: String
+  }
   input SortInput {
     category: String!
     order: Int!
@@ -150,6 +154,7 @@ const typeDefs = `
     addUser(input: UserInput!, location: LocationInput): User
     updateMe(input: UserInput!, location: LocationInput): Me
     addJob(input: JobInput!, locations: [LocationInput!]!): Job
+    uploadAttachmentToDrive(attachmentId: String!, messageId: String!, fileName: String!, mimeType: String!, userId: String): DriveFile
   }
 `
 
