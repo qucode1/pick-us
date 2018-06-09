@@ -31,7 +31,13 @@ const typeDefs = `
     from: String,
     subject: String,
     date: String,
-    message: String
+    message: String,
+    attachments: [DecodedAttachment]
+  }
+  type DecodedAttachment {
+    fileName: String,
+    mimeType: String,
+    attachmentId: String
   }
   type MessageDetails {
     id: String,
@@ -50,7 +56,7 @@ const typeDefs = `
     filename: String,
     headers: [MessagePayloadHeader],
     body: MessageAttachment,
-    parts: [MessagePayloadPart]
+    parts: [MessagePayload]
   }
   type MessagePayloadHeader {
     name: String,
@@ -66,14 +72,6 @@ const typeDefs = `
     nextPageToken: String,
     resultSizeEstimate: Int
   }
-  type MessagePayloadPart {
-    partId: String,
-    filename: String,
-    mimeType: String,
-    headers: [MessagePayloadHeader],
-    body: MessageAttachment
-    parts: [MessagePayloadPart]
-  }
   type Me {
     id: String
     firstName: String
@@ -82,6 +80,7 @@ const typeDefs = `
     auth0: String
     role: String
     location: LocationRef
+    files: [File]
     profileToken: String
     publicKey: String
   }
@@ -93,10 +92,15 @@ const typeDefs = `
     auth0: String
     role: String
     location: LocationRef
+    files: [File]
   }
   type nearbyUser {
     distance: Float,
     user: User
+  }
+  type File {
+    name: String
+    link: String
   }
   type Job {
     id: String

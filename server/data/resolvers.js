@@ -114,7 +114,7 @@ const resolvers = {
     async emails(
       _,
       {
-        userId,
+        userId = "yannick@qucode.eu",
         q: {
           email = "",
           hasAttachment = false,
@@ -152,7 +152,7 @@ const resolvers = {
             break
         }
         const messages = await getMessageList(userId, query)
-        return messages.data
+        return { ...messages.data, userId: userId }
       } catch (err) {
         console.error("emails resolver error", err)
         const e = new CustomError({
@@ -167,8 +167,6 @@ const resolvers = {
     },
     async emailAttachment(_, { attachmentId, messageId, userId }, ctx) {
       try {
-        // console.log("messageId resolver", messageId)
-        // console.log("attachmentId resolver", attachmentId)
         const attachment = await getAttachment({
           attachmentId,
           messageId,
@@ -307,19 +305,72 @@ const resolvers = {
       return user._id
     }
   },
+  EmailData: {
+    messages(emailData, args, context, info) {
+      return emailData.messages.map(message => ({
+        ...message,
+        userId: emailData.userId
+      }))
+    }
+  },
   Message: {
-    async messageDetails(message) {
-      // console.log("Message message", message)
+    async messageDetails(message, args, context, info) {
       const result = await getMessage({ id: message.id })
-      // console.dir(result.data.payload.parts)
-      return result.data
+      return { ...result.data, userId: message.userId }
     },
     decoded(obj, args, context, info) {
-      // console.dir(info.fieldNodes[0].selectionSet.loc)
-      // console.dir(args)
-      // console.dir(context)
-      // console.dir(info)
       return getDecodedMessage({ id: obj.id })
+    }
+  },
+  MessageDetails: {
+    payload(messageDetails, args, context, info) {
+      return {
+        ...messageDetails.payload,
+        messageId: messageDetails.id,
+        userId: messageDetails.userId
+      }
+    }
+  },
+  MessagePayload: {
+    body(messagePayload, args, context, info) {
+      return {
+        ...messagePayload.body,
+        messageId: messagePayload.messageId,
+        userId: messagePayload.userId
+      }
+    },
+    parts(messagePayload, args, context, info) {
+      if (messagePayload.parts) {
+        return messagePayload.parts.map(part => ({
+          ...part,
+          messageId: messagePayload.messageId,
+          userId: messagePayload.userId
+        }))
+      }
+    }
+  },
+  MessageAttachment: {
+    async data({ data, attachmentId, messageId, userId }, args, context, info) {
+      try {
+        if (!attachmentId) return null
+        if (data) return data
+        const attachment = await getAttachment({
+          attachmentId,
+          messageId,
+          userId
+        })
+        return attachment.data
+      } catch (err) {
+        console.error(err)
+        const e = new CustomError({
+          message: "MessageAttachment.data resolver error",
+          data: {
+            code: 400,
+            error: err
+          }
+        })
+        return e
+      }
     }
   },
   // Job: {

@@ -56,7 +56,6 @@ const getDecodedMessage = async ({
     const {
       data: { payload }
     } = await getMessage({ id, userId, format })
-    // console.log("payload", payload)
     const decoded = payload.headers.reduce((result, header) => {
       switch (true) {
         case header.name === "To":
@@ -71,13 +70,11 @@ const getDecodedMessage = async ({
       return result
     }, {})
     decoded.id = id
-    // console.log("payload parts", payload.parts)
     decoded.message = Base64.decode(
       payload.mimeType === "text/plain"
         ? payload.body.data
         : payload.parts
           ? payload.parts.reduce((result, part) => {
-              // console.log("part", part)
               if (part.mimeType === "text/plain") {
                 result = part.body.data
               } else if (part.mimeType.startsWith("multipart")) {
@@ -94,7 +91,13 @@ const getDecodedMessage = async ({
             ? payload.body.data
             : ""
     )
-    // console.log("decoded", decoded)
+    decoded.attachments = payload.fileName
+      ? payload.filename
+      : payload.parts.filter(part => part.filename).map(part => ({
+          fileName: part.filename,
+          mimeType: part.mimeType,
+          attachmentId: part.body.attachmentId
+        }))
     return decoded
   } catch (err) {
     throw err
@@ -107,8 +110,6 @@ const getAttachment = async ({
   userId = gmailUserId
 }) => {
   try {
-    console.log("messageId", messageId)
-    console.log("attachmentId", attachmentId)
     await jwtClient.authorize()
     const attachment = gmail.users.messages.attachments.get({
       auth: jwtClient,
@@ -124,8 +125,6 @@ const getAttachment = async ({
 
 const uploadFile = async ({ data, fileName, mimeType, id }) => {
   try {
-    // console.log("fileName", fileName)
-    // console.log("mimeType", mimeType)
     const writeFile = promisify(fs.writeFile)
     const unlink = promisify(fs.unlink)
     await writeFile(`tempUploads/${fileName}`, data, "base64")
@@ -144,7 +143,6 @@ const uploadFile = async ({ data, fileName, mimeType, id }) => {
       fields: "id"
     })
     unlink(`tempUploads/${fileName}`)
-    // console.dir(file)
     return file
   } catch (err) {
     throw err

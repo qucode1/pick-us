@@ -12,6 +12,7 @@ import TextField from "material-ui/TextField"
 
 import Loading from "../loading/Loading"
 import EmailHistory from "../emailHistory/EmailHistory"
+import UserFiles from "../userFiles/UserFiles"
 
 import { ADDUSER } from "../../mutations/user"
 import { EMAILHISTORY } from "../../queries/email"
@@ -162,6 +163,7 @@ class AddUser extends Component {
                           onChange={this.handleChange}
                           margin="normal"
                         />
+                        <UserFiles />
                       </Fragment>
                     )}
                   </CardContent>
