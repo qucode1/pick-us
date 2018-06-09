@@ -390,7 +390,11 @@ const resolvers = {
   //     }
   // },
   Mutation: {
-    async addUser(_, { input, location }, { idToken, profileToken, user }) {
+    async addUser(
+      _,
+      { input, location, files, messages },
+      { idToken, profileToken, user }
+    ) {
       try {
         if (!idToken) return new AuthenticationError()
         // check for profileToken instead of user,
@@ -399,7 +403,8 @@ const resolvers = {
         if (profileToken && isAdmin(user)) {
           const user = new User({
             _id: new mongoose.Types.ObjectId(),
-            ...input
+            ...input,
+            messages
           })
           // const userLocation = await new Location({
           //     category: "user",

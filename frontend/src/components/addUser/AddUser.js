@@ -90,7 +90,7 @@ class AddUser extends Component {
 
   render() {
     const { classes } = this.props
-    const { firstName, lastName, email } = this.state
+    const { firstName, lastName, email, messages } = this.state
     return (
       <Mutation
         mutation={ADDUSER}
@@ -187,7 +187,13 @@ class AddUser extends Component {
                           e.preventDefault()
                           addUser({
                             variables: {
-                              input: { firstName, lastName, email }
+                              input: { firstName, lastName, email },
+                              messages: messages.map(message => {
+                                const {
+                                  decoded: { __typename, ...rest }
+                                } = message
+                                return rest
+                              })
                             }
                           })
                         }}

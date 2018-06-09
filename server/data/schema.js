@@ -81,6 +81,7 @@ const typeDefs = `
     role: String
     location: LocationRef
     files: [File]
+    messages: [DecodedMessage]
     profileToken: String
     publicKey: String
   }
@@ -93,6 +94,7 @@ const typeDefs = `
     role: String
     location: LocationRef
     files: [File]
+    messages: [DecodedMessage]
   }
   type nearbyUser {
     distance: Float,
@@ -146,6 +148,24 @@ const typeDefs = `
     lastName: String!
     email: String!
   }
+  input MessageInput {
+    id: String,
+    to: String,
+    from: String,
+    subject: String,
+    date: String,
+    message: String,
+    attachments: [AttachmentInput]
+  }
+  input AttachmentInput {
+    fileName: String,
+    mimeType: String,
+    attachmentId: String
+  }
+  input FileInput {
+    name: String
+    link: String
+  }
   input LocationInput {
     coordinates: [Float!]!
     address: String!
@@ -155,7 +175,7 @@ const typeDefs = `
     description: String!
   }
   type Mutation {
-    addUser(input: UserInput!, location: LocationInput): User
+    addUser(input: UserInput!, location: LocationInput, files: [FileInput], messages: [MessageInput]): User
     updateMe(input: UserInput!, location: LocationInput): Me
     addJob(input: JobInput!, locations: [LocationInput!]!): Job
     uploadAttachmentToDrive(attachmentId: String!, messageId: String!, fileName: String!, mimeType: String!, userId: String): DriveFile

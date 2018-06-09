@@ -14,6 +14,29 @@ const UserSchema = mongoose.Schema({
   status: String,
   role: String,
   createdAt: Date,
+  files: [
+    {
+      name: String,
+      link: String
+    }
+  ],
+  messages: [
+    {
+      id: String,
+      to: String,
+      from: String,
+      subject: String,
+      date: String,
+      message: String,
+      attachments: [
+        {
+          fileName: String,
+          mimeType: String,
+          attachmentId: String
+        }
+      ]
+    }
+  ],
   location: {
     address: String,
     details: {
