@@ -177,6 +177,7 @@ const typeDefs = `
   type Mutation {
     addUser(input: UserInput!, location: LocationInput, files: [FileInput], messages: [MessageInput]): User
     updateMe(input: UserInput!, location: LocationInput): Me
+    updateUser(id: String!, input: UserInput!, location: LocationInput, messages: [MessageInput]): User
     addJob(input: JobInput!, locations: [LocationInput!]!): Job
     uploadAttachmentToDrive(attachmentId: String!, messageId: String!, fileName: String!, mimeType: String!, userId: String): DriveFile
   }

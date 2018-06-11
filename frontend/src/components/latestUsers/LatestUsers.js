@@ -54,15 +54,25 @@ const LatestUsers = ({ classes }) => {
                   <Typography variant="title">Neuste Nutzer:</Typography>
                   {allUsers.map(user => (
                     <Fragment key={user.id}>
-                      <Typography variant="subheading">
-                        {user.firstName} {user.lastName} - {user.email} -{" "}
-                        {user.role}
-                      </Typography>
+                      <Button
+                        color="primary"
+                        component={Link}
+                        to={`/users/${user.id}`}
+                      >
+                        <Typography variant="subheading">
+                          {user.firstName} {user.lastName} - {user.email}
+                        </Typography>
+                      </Button>
                     </Fragment>
                   ))}
                 </CardContent>
                 <CardActions>
-                  <Button color="primary" component={Link} to="/users/add">
+                  <Button
+                    color="primary"
+                    variant="raised"
+                    component={Link}
+                    to="/users/add"
+                  >
                     Add User
                   </Button>
                 </CardActions>

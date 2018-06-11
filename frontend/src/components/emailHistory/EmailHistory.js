@@ -65,10 +65,7 @@ class EmailHistory extends Component {
           {messages &&
             messages.length > 0 &&
             messages.map(message => (
-              <div
-                key={message.decoded.id}
-                className={classes.emailHistoryMessage}
-              >
+              <div key={message.id} className={classes.emailHistoryMessage}>
                 <div className={classes.messageHeader}>
                   <div className={classes.messageInfo}>
                     <Typography
@@ -77,9 +74,7 @@ class EmailHistory extends Component {
                     >
                       Von
                     </Typography>
-                    <Typography variant="caption">
-                      {message.decoded.from}
-                    </Typography>
+                    <Typography variant="caption">{message.from}</Typography>
                   </div>
                   <div className={classes.messageInfo}>
                     <Typography
@@ -88,9 +83,7 @@ class EmailHistory extends Component {
                     >
                       Betreff
                     </Typography>
-                    <Typography variant="caption">
-                      {message.decoded.subject}
-                    </Typography>
+                    <Typography variant="caption">{message.subject}</Typography>
                   </div>
                   <div className={classes.messageInfo}>
                     <Typography
@@ -99,9 +92,7 @@ class EmailHistory extends Component {
                     >
                       Datum
                     </Typography>
-                    <Typography variant="caption">
-                      {message.decoded.date}
-                    </Typography>
+                    <Typography variant="caption">{message.date}</Typography>
                   </div>
                 </div>
                 <div className={classes.content}>
@@ -115,27 +106,25 @@ class EmailHistory extends Component {
                     variant="caption"
                     // dangerouslySetInnerHTML={{
                     //   __html:
-                    //     message.decoded.message.length > 100 &&
-                    //     !this.state[`message${message.decoded.id}`]
-                    //       ? `${message.decoded.message.slice(0, 97)}...`
-                    //       : message.decoded.message
+                    //     message.message.length > 100 &&
+                    //     !this.state[`message${message.id}`]
+                    //       ? `${message.message.slice(0, 97)}...`
+                    //       : message.message
                     // }}
                   >
-                    {message.decoded.message.length > 200 &&
-                    !this.state[`message${message.decoded.id}`]
-                      ? `${message.decoded.message.slice(0, 197)}...`
-                      : message.decoded.message}
+                    {message.message.length > 200 &&
+                    !this.state[`message${message.id}`]
+                      ? `${message.message.slice(0, 197)}...`
+                      : message.message}
                   </Typography>
                 </div>
                 <div className={classes.actions}>
-                  {message.decoded.message.length > 200 && (
+                  {message.message.length > 200 && (
                     <Button
                       color="primary"
-                      onClick={() => this.toggleMessage(message.decoded.id)}
+                      onClick={() => this.toggleMessage(message.id)}
                     >
-                      {this.state[`message${message.decoded.id}`]
-                        ? "Weniger"
-                        : "Mehr"}
+                      {this.state[`message${message.id}`] ? "Weniger" : "Mehr"}
                     </Button>
                   )}
                 </div>

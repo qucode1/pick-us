@@ -40,22 +40,6 @@ const ProfileQueryWrapper = props => (
 const ProfileMutationWrapper = props => (
   <Mutation
     mutation={UPDATEME}
-    // update={(cache, { data: { updateMe } }) => {
-    //   const { me } = cache.readQuery({ query: ME })
-    //   console.dir({ ...me, ...updateMe })
-    //   cache.writeQuery({
-    //     query: ME,
-    //     data: {
-    //       me: {
-    //         ...me,
-    //         firstName: updateMe.firstName,
-    //         lastName: updateMe.lastName,
-    //         email: updateMe.email,
-    //         __typename: updateMe.__typename
-    //       }
-    //     }
-    //   })
-    // }}
   >
     {(updateMe, { loading, error, data }) => {
       if (loading) return <h3>Loading...</h3>

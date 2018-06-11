@@ -37,7 +37,7 @@ class Profile extends Component {
     this.setState({
       firstName: this.props.firstName || "",
       lastName: this.props.lastName || "",
-      email: this.props.email
+      email: this.props.email || ""
     })
   }
   handleChange = e => {
@@ -46,15 +46,18 @@ class Profile extends Component {
     })
   }
   updateProfile() {
-    this.props.updateMe({
-      variables: {
-        input: {
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
-          email: this.state.email
-        }
+    const variables = {
+      input: {
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        email: this.state.email
       }
-    })
+    }
+    if (this.props.mutationTarget === "me") {
+      this.props.update({ variables })
+    } else if (this.props.mutationTarget === "user") {
+      this.props.update({ variables: { ...variables, id: this.props.id } })
+    }
   }
   render() {
     const { classes } = this.props

@@ -79,7 +79,8 @@ class AddUser extends Component {
               q: { email: this.state.email, includeSentEmails: true }
             }
           })
-          this.setState({ messages, fetchingEmails: false })
+          let decoded = messages.map(message => ({ ...message.decoded }))
+          this.setState({ messages: decoded, fetchingEmails: false })
         }
       )
     } catch (err) {

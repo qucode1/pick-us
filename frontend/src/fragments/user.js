@@ -12,13 +12,29 @@ export const UserAuthFragment = gql`
     role
   }
 `
+
+export const UserMessagesFragment = gql`
+  fragment UserMessagesFragment on User {
+    messages {
+      id
+      to
+      from
+      subject
+      date
+      message
+    }
+  }
+`
 export const FullUserProfileFragment = gql`
   fragment FullUserProfileFragment on User {
     id
     ...UserNameFragment
     ...UserAuthFragment
+    ...UserMessagesFragment
     email
+    files
   }
   ${UserNameFragment}
   ${UserAuthFragment}
+  ${UserMessagesFragment}
 `

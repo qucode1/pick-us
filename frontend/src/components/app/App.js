@@ -16,6 +16,7 @@ import ErrorComponent from "../error/Error"
 import Header from "../header/Header"
 import AddUser from "../addUser/AddUser"
 import AddedUser from "../addedUser/AddedUser"
+import UserProfile from "../userProfile/UserProfile"
 
 import logo from "../../bgLogo.svg"
 
@@ -155,6 +156,7 @@ class App extends Component {
               path="/users/add/success"
               component={AddedUser}
             />
+            <PrivateRoute exact path="/users/:id" component={UserProfile} />
             <PrivateRoute exact path="/callback" component={Callback} />
             <Route exact path="/error" component={ErrorComponent} />
             <Route

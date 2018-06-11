@@ -200,9 +200,9 @@ const resolvers = {
         }
       }
     },
-    user(_, args, { profileToken, user }) {
+    async user(_, { id: _id, ...args }, { profileToken, user }) {
       try {
-        return isAdmin(user) ? User.findOne(args) : {}
+        return isAdmin(user) ? await User.findOne({ _id, ...args }) : {}
       } catch (err) {
         const e = new CustomError({
           message: "user query resolver error",
@@ -222,7 +222,7 @@ const resolvers = {
     ) {
       try {
         return isAdmin(user)
-          ? User.find()
+          ? await User.find()
               .sort({ [sort.category]: sort.order })
               .limit(limit)
               .skip(skip)
@@ -307,10 +307,12 @@ const resolvers = {
   },
   EmailData: {
     messages(emailData, args, context, info) {
-      return emailData.messages.map(message => ({
-        ...message,
-        userId: emailData.userId
-      }))
+      return emailData.messages
+        ? emailData.messages.map(message => ({
+            ...message,
+            userId: emailData.userId
+          }))
+        : []
     }
   },
   Message: {
@@ -429,7 +431,7 @@ const resolvers = {
     },
     async updateMe(_, { input, location }, { user }) {
       try {
-        console.log("updateMe mutation resolver, input:", input)
+        // console.log("updateMe mutation resolver, input:", input)
         if (user && user._id) {
           await User.findByIdAndUpdate(user._id, {
             ...input,
@@ -441,6 +443,25 @@ const resolvers = {
               user.role
           })
           return await User.findOne({ _id: user._id })
+        } else return new AuthorizationError()
+      } catch (error) {
+        console.error(error)
+        return new CustomError({
+          message: "updateMe mutation resolver error",
+          data: {
+            error
+          }
+        })
+      }
+    },
+    async updateUser(_, { id: _id, input, messages }, { user }) {
+      try {
+        if (user && user._id) {
+          await User.findByIdAndUpdate(_id, {
+            ...input,
+            messages
+          })
+          return await User.findById(_id)
         } else return new AuthorizationError()
       } catch (error) {
         console.error(error)
