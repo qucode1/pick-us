@@ -141,7 +141,8 @@ const typeDefs = `
     email: String,
     includeSentEmails: Boolean,
     hasAttachment: Boolean,
-    alternativeQuery: String
+    alternativeQuery: String,
+    after: String
   }
   input UserInput {
     firstName: String!

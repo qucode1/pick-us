@@ -23,7 +23,12 @@ const ProfileMutationWrapper = props => (
             }}
           </MyContext.Consumer>
         )
-      } else return <ProfileQueryWrapper {...props} update={update} />
+      } else {
+        if (data && data.me) {
+          localStorage.setItem("profileToken", data.updateMe.profileToken)
+        }
+        return <ProfileQueryWrapper {...props} update={update} />
+      }
     }}
   </Mutation>
 )

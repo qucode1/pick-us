@@ -119,23 +119,22 @@ const resolvers = {
           email = "",
           hasAttachment = false,
           includeSentEmails = false,
-          alternativeQuery = ""
+          alternativeQuery = "",
+          after = ""
         } = {}
       },
       ctx
     ) {
       try {
-        const defaultQuery = `(${email} from:info@qucode.eu to:info@qucode.eu in:anywhere${
-          hasAttachment ? " has:attachment" : ""
-        }) OR (from:${email} in:anywhere${
-          hasAttachment ? " has:attachment" : ""
-        })`
-
-        const includeSentEmailsQuery = `(${email} from:info@qucode.eu to:info@qucode.eu in:anywhere${
-          hasAttachment ? " has:attachment" : ""
-        }) OR (from:${email} in:anywhere${
-          hasAttachment ? " has:attachment" : ""
-        }) OR (to:${email} in:sent${hasAttachment ? " has:attachment" : ""})`
+        hasAttachment = hasAttachment ? " has:attachment" : ""
+        after = after
+          ? " after:" +
+            Date.parse(after)
+              .toString()
+              .slice(0, -3)
+          : ""
+        const defaultQuery = `(${email} from:info@qucode.eu to:info@qucode.eu in:anywhere${hasAttachment}${after}) OR (from:${email} in:anywhere${hasAttachment}${after})`
+        const includeSentEmailsQuery = `(${email} from:info@qucode.eu to:info@qucode.eu in:anywhere${hasAttachment}${after}) OR (from:${email} in:anywhere${hasAttachment}${after}) OR (to:${email} in:sent${hasAttachment})`
 
         let query = ""
         switch (true) {

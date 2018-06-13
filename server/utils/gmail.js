@@ -93,7 +93,8 @@ const getDecodedMessage = async ({
     )
     decoded.attachments = payload.fileName
       ? payload.filename
-      : payload.parts.filter(part => part.filename).map(part => ({
+      : payload.parts &&
+        payload.parts.filter(part => part.filename).map(part => ({
           fileName: part.filename,
           mimeType: part.mimeType,
           attachmentId: part.body.attachmentId
