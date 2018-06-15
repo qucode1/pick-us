@@ -37,7 +37,12 @@ class Profile extends Component {
     this.setState({
       firstName: this.props.firstName || "",
       lastName: this.props.lastName || "",
-      email: this.props.email || ""
+      email: this.props.email || "",
+      messages: this.props.messages || []
+    })
+    this.props.getNewEmails({
+      email: this.props.email,
+      oldMessages: this.props.messages || []
     })
   }
   handleChange = e => {
@@ -46,17 +51,19 @@ class Profile extends Component {
     })
   }
   updateProfile() {
-    const variables = {
-      input: {
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        email: this.state.email
-      }
+    const input = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email
     }
+    const messages = this.props.messages.map(message => {
+      const { __typename, ...rest } = message
+      return rest
+    })
     if (this.props.mutationTarget === "me") {
-      this.props.update({ variables })
+      this.props.update({ variables: { input } })
     } else if (this.props.mutationTarget === "user") {
-      this.props.update({ variables: { ...variables, id: this.props.id } })
+      this.props.update({ variables: { input, messages, id: this.props.id } })
     }
   }
   render() {

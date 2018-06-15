@@ -4,6 +4,7 @@
     "react/prop-types": [0],
     "no-unused-vars": [1],
     "no-console": [1],
+    "no-debugger": [1],
     "no-sequences": [0]
   }
 }

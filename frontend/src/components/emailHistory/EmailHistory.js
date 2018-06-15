@@ -47,10 +47,6 @@ const styles = theme => ({
 })
 
 class EmailHistory extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
   toggleMessage = id => {
     this.setState({
       [`message${id}`]: !this.state[`message${id}`]

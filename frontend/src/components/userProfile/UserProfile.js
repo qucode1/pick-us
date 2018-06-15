@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
+import { withApollo } from "react-apollo"
 
 import { USER } from "../../queries/user"
 import { UPDATEUSER } from "../../mutations/user"
@@ -11,15 +12,15 @@ class UserProfile extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      fetchingEmails: false,
-      messages: []
+      fetchingNewEmails: false,
+      updatedMessages: []
     }
   }
-  getMatchingEmails = () => {
+  getNewEmails = ({ email, oldMessages }) => {
     try {
       this.setState(
         () => ({
-          fetchingEmails: true
+          fetchingNewEmails: true
         }),
         async () => {
           const {
@@ -27,11 +28,24 @@ class UserProfile extends Component {
           } = await this.props.client.query({
             query: EMAILHISTORY,
             variables: {
-              q: { email: this.state.email, includeSentEmails: true }
+              q: { email, includeSentEmails: true }
             }
           })
-          let decoded = messages.map(message => ({ ...message.decoded }))
-          this.setState({ messages: decoded, fetchingEmails: false })
+          const decoded = messages.map(message => ({ ...message.decoded }))
+          const newMessages =
+            decoded.length > 0
+              ? decoded.filter(newMessage => {
+                  return (
+                    Date.parse(newMessage.date) >
+                    Date.parse(oldMessages[0].date)
+                  )
+                })
+              : []
+          const updatedMessages = [...newMessages, ...oldMessages]
+          this.setState({
+            updatedMessages,
+            fetchingNewEmails: false
+          })
         }
       )
     } catch (err) {
@@ -39,9 +53,7 @@ class UserProfile extends Component {
       throw err
     }
   }
-  componentDidMount() {
-    
-  }
+  componentDidMount() {}
   render() {
     return (
       <ProfileMutationWrapper
@@ -49,9 +61,12 @@ class UserProfile extends Component {
         query={USER}
         queryVariables={{ id: this.props.match.params.id }}
         mutationTarget="user"
+        updatedMessages={this.state.updatedMessages}
+        fetchingNewEmails={this.state.fetchingEmails}
+        getNewEmails={this.getNewEmails}
       />
     )
   }
 }
 
-export default withRouter(UserProfile)
+export default withRouter(withApollo(UserProfile))
