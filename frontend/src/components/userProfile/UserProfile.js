@@ -16,7 +16,7 @@ class UserProfile extends Component {
       updatedMessages: []
     }
   }
-  getNewEmails = ({ email, oldMessages }) => {
+  getNewEmails = ({ input, oldMessages, id }) => {
     try {
       this.setState(
         () => ({
@@ -28,26 +28,42 @@ class UserProfile extends Component {
           } = await this.props.client.query({
             query: EMAILHISTORY,
             variables: {
-              q: { email, includeSentEmails: true }
+              q: { email: input.email, includeSentEmails: true }
             }
           })
           const decoded = messages.map(message => ({ ...message.decoded }))
-          const newMessages =
-            decoded.length > 0
-              ? decoded.filter(newMessage => {
-                  return (
-                    Date.parse(newMessage.date) >
-                    Date.parse(oldMessages[0].date)
-                  )
-                })
-              : []
-          const updatedMessages = [...newMessages, ...oldMessages]
-          this.setState({
-            updatedMessages,
-            fetchingNewEmails: false
-          })
+          const newMessages = decoded.filter(
+            newMessage =>
+              Date.parse(newMessage.date) > Date.parse(oldMessages[0].date)
+          )
+          if (newMessages.length) {
+            const updatedMessages = [...newMessages, ...oldMessages]
+            this.setState({
+              updatedMessages,
+              fetchingNewEmails: false
+            })
+            this.saveNewEmails(id, input, updatedMessages)
+          }
         }
       )
+    } catch (err) {
+      console.error(err)
+      throw err
+    }
+  }
+  saveNewEmails = async (id, input, messages) => {
+    try {
+      const savedUser = await this.props.client.mutate({
+        mutation: UPDATEUSER,
+        variables: {
+          id,
+          input,
+          messages: messages.map(message => {
+            const { __typename, ...rest } = message
+            return rest
+          })
+        }
+      })
     } catch (err) {
       console.error(err)
       throw err

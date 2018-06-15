@@ -41,8 +41,13 @@ class Profile extends Component {
       messages: this.props.messages || []
     })
     this.props.getNewEmails({
-      email: this.props.email,
-      oldMessages: this.props.messages || []
+      input: {
+        firstName: this.props.firstName,
+        lastName: this.props.lastName,
+        email: this.props.email
+      },
+      oldMessages: this.props.messages || [],
+      id: this.props.id
     })
   }
   handleChange = e => {
