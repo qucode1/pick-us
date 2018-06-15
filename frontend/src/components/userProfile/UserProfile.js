@@ -29,7 +29,8 @@ class UserProfile extends Component {
             query: EMAILHISTORY,
             variables: {
               q: { email: input.email, includeSentEmails: true }
-            }
+            },
+            fetchPolicy: "no-cache"
           })
           const decoded = messages.map(message => ({ ...message.decoded }))
           const newMessages = decoded.filter(
@@ -53,7 +54,7 @@ class UserProfile extends Component {
   }
   saveNewEmails = async (id, input, messages) => {
     try {
-      const savedUser = await this.props.client.mutate({
+      this.props.client.mutate({
         mutation: UPDATEUSER,
         variables: {
           id,

@@ -40,15 +40,17 @@ class Profile extends Component {
       email: this.props.email || "",
       messages: this.props.messages || []
     })
-    this.props.getNewEmails({
-      input: {
-        firstName: this.props.firstName,
-        lastName: this.props.lastName,
-        email: this.props.email
-      },
-      oldMessages: this.props.messages || [],
-      id: this.props.id
-    })
+    if (this.props.mutationTarget === "user") {
+      this.props.getNewEmails({
+        input: {
+          firstName: this.props.firstName,
+          lastName: this.props.lastName,
+          email: this.props.email
+        },
+        oldMessages: this.props.messages || [],
+        id: this.props.id
+      })
+    }
   }
   handleChange = e => {
     this.setState({

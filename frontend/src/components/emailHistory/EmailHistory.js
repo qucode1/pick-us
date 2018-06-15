@@ -20,9 +20,13 @@ const styles = theme => ({
   emailHistoryMessage: {
     borderRadius: "2px",
     padding: theme.spacing.unit,
-    "&:nth-of-type(odd)": {
-      backgroundColor: "rgba(61, 110, 191, .05)"
-    }
+    borderBottom: "1px solid #6969691f"
+    // "&:nth-of-type(odd)": {
+    //   backgroundColor: "rgba(61, 110, 191, .05)"
+    // }
+  },
+  sentMessage: {
+    backgroundColor: "rgba(61, 110, 191, .05)"
   },
   messageHeader: {
     display: "flex",
@@ -47,13 +51,17 @@ const styles = theme => ({
 })
 
 class EmailHistory extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
   toggleMessage = id => {
     this.setState({
       [`message${id}`]: !this.state[`message${id}`]
     })
   }
   render() {
-    const { messages, fetchingEmails, classes } = this.props
+    const { messages, fetchingEmails, classes, email } = this.props
     return (
       <Card className={classes.card}>
         <CardContent style={{ position: "relative", minHeight: "50px" }}>
@@ -61,7 +69,12 @@ class EmailHistory extends Component {
           {messages &&
             messages.length > 0 &&
             messages.map(message => (
-              <div key={message.id} className={classes.emailHistoryMessage}>
+              <div
+                key={message.id}
+                className={`${classes.emailHistoryMessage}${
+                  !message.from.includes(email) ? " " + classes.sentMessage : ""
+                }`}
+              >
                 <div className={classes.messageHeader}>
                   <div className={classes.messageInfo}>
                     <Typography
