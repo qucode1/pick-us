@@ -9,6 +9,7 @@ import Typography from "material-ui/Typography"
 import Card, { CardActions, CardContent } from "material-ui/Card"
 import Button from "material-ui/Button"
 import TextField from "material-ui/TextField"
+import FormControl from "@material-ui/core/FormControl"
 
 import Loading from "../loading/Loading"
 import EmailHistory from "../emailHistory/EmailHistory"
@@ -19,6 +20,10 @@ import { EMAILHISTORY } from "../../queries/email"
 import { ALLUSERS } from "../../queries/user"
 
 const styles = theme => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
   card: {
     // position: "relative",
     margin: `${theme.spacing.unit * 2}px auto`,
@@ -31,6 +36,14 @@ const styles = theme => ({
   heading: {
     textAlign: "center",
     margin: theme.spacing.unit * 2
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: "200px",
+    [theme.breakpoints.down("xs")]: {
+      width: "95%"
+    }
   }
 })
 
@@ -115,102 +128,112 @@ class AddUser extends Component {
               <Typography variant="display1" className={classes.heading}>
                 Add User
               </Typography>
-              <form>
+              <form
+                className={classes.root}
+                onSubmit={e => {
+                  e.preventDefault()
+                  addUser({
+                    variables: {
+                      input: { firstName, lastName, email },
+                      messages: messages.map(message => {
+                        const { decoded: { __typename, ...rest } } = message
+                        return rest
+                      })
+                    }
+                  })
+                }}
+              >
                 <Card className={classes.card}>
-                  {loading && <Loading />}
-                  {error && (
-                    <MyContext.Consumer>
-                      {context => {
-                        return (
-                          <Fragment>
-                            {context.setError(error)}
-                            <Redirect to="/error" />
-                          </Fragment>
-                        )
-                      }}
-                    </MyContext.Consumer>
-                  )}
-                  <CardContent>
-                    {data ? (
-                      <Fragment>
-                        <Typography variant="subheading">
-                          {data.addUser.firstName} {data.addUser.lastName}{" "}
-                          successfully added!
-                        </Typography>
-                      </Fragment>
-                    ) : (
-                      <Fragment>
-                        <TextField
-                          id="firstName"
-                          name="firstName"
-                          label="First Name"
-                          value={this.state.firstName}
-                          onChange={this.handleChange}
-                          margin="normal"
-                        />
-                        <TextField
-                          id="lastName"
-                          name="lastName"
-                          label="Last Name"
-                          value={this.state.lastName}
-                          onChange={this.handleChange}
-                          margin="normal"
-                        />
-                        <TextField
-                          id="email"
-                          name="email"
-                          label="Email"
-                          value={this.state.email}
-                          onChange={this.handleChange}
-                          margin="normal"
-                        />
-                        <UserFiles />
-                      </Fragment>
-                    )}
-                  </CardContent>
-                  <CardActions>
-                    {data ? (
+                  <FormControl margin="dense">
+                    {loading && <Loading />}
+                    {error && (
                       <MyContext.Consumer>
                         {context => {
                           return (
                             <Fragment>
-                              {context.setAddedUser(data.addUser)}
-                              <Redirect to="/users/add/success" />
+                              {context.setError(error)}
+                              <Redirect to="/error" />
                             </Fragment>
                           )
                         }}
                       </MyContext.Consumer>
-                    ) : (
-                      <Button
-                        variant="raised"
-                        color="primary"
-                        onClick={e => {
-                          e.preventDefault()
-                          addUser({
-                            variables: {
-                              input: { firstName, lastName, email },
-                              messages: messages.map(message => {
-                                const {
-                                  decoded: { __typename, ...rest }
-                                } = message
-                                return rest
-                              })
-                            }
-                          })
-                        }}
-                      >
-                        Add User
-                      </Button>
                     )}
-                    <Button color="primary" component={Link} to="/">
-                      Home
-                    </Button>
-                  </CardActions>
+                    <CardContent>
+                      {data ? (
+                        <Fragment>
+                          <Typography variant="subheading">
+                            {data.addUser.firstName} {data.addUser.lastName}{" "}
+                            successfully added!
+                          </Typography>
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          <TextField
+                            id="firstName"
+                            name="firstName"
+                            label="First Name"
+                            value={this.state.firstName}
+                            onChange={this.handleChange}
+                            margin="dense"
+                            type="text"
+                            required
+                            autoFocus
+                            className={classes.textField}
+                          />
+                          <TextField
+                            id="lastName"
+                            name="lastName"
+                            label="Last Name"
+                            value={this.state.lastName}
+                            onChange={this.handleChange}
+                            margin="dense"
+                            type="text"
+                            required
+                            className={classes.textField}
+                          />
+                          <TextField
+                            id="email"
+                            name="email"
+                            label="Email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                            margin="dense"
+                            type="email"
+                            required
+                            className={classes.textField}
+                          />
+                          <UserFiles {...this.state} />
+                        </Fragment>
+                      )}
+                    </CardContent>
+                    <CardActions>
+                      {data ? (
+                        <MyContext.Consumer>
+                          {context => {
+                            return (
+                              <Fragment>
+                                {context.setAddedUser(data.addUser)}
+                                <Redirect to="/users/add/success" />
+                              </Fragment>
+                            )
+                          }}
+                        </MyContext.Consumer>
+                      ) : (
+                        <Button variant="raised" color="primary" type="submit">
+                          Add User
+                        </Button>
+                      )}
+                      <Button color="primary" component={Link} to="/">
+                        Home
+                      </Button>
+                    </CardActions>
+                  </FormControl>
                 </Card>
               </form>
               <EmailHistory
                 fetchingEmails={this.state.fetchingEmails}
                 messages={this.state.messages}
+                email={this.state.email}
               />
             </Fragment>
           )

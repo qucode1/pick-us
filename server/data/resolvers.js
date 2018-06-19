@@ -148,6 +148,7 @@ const resolvers = {
             query = defaultQuery
             break
           default:
+            query = defaultQuery
             break
         }
         const messages = await getMessageList(userId, query)

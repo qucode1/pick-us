@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/vsls",
+    "gitignore":"none",
+    "excludeFiles":[
+        "server/gsuiteServiceAccount.json",
+        "*.env",
+        ".gitignore"
+    ],
+    "hideFiles": [
+    ]
+}

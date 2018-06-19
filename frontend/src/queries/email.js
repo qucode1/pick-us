@@ -16,3 +16,22 @@ export const EMAILHISTORY = gql`
     }
   }
 `
+
+export const EMAILSWITHATTACHMENT = gql`
+  query emailsWithAttachment($q: GmailQueryInput) {
+    emails(q: $q) {
+      messages {
+        decoded {
+          id
+          date
+          subject
+          attachments {
+            fileName
+            mimeType
+            attachmentId
+          }
+        }
+      }
+    }
+  }
+`

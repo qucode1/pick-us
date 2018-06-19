@@ -72,7 +72,10 @@ class EmailHistory extends Component {
               <div
                 key={message.id}
                 className={`${classes.emailHistoryMessage}${
-                  !message.from.includes(email) ? " " + classes.sentMessage : ""
+                  message.from.includes(email) ||
+                  message.from.includes("via Info")
+                    ? ""
+                    : " " + classes.sentMessage
                 }`}
               >
                 <div className={classes.messageHeader}>
