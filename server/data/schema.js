@@ -103,6 +103,7 @@ const typeDefs = `
   type File {
     name: String
     link: String
+    date: String
   }
   type Job {
     id: String
@@ -131,7 +132,7 @@ const typeDefs = `
     data: Location
   }
   type DriveFile {
-    id: String
+    id: String!
   }
   input SortInput {
     category: String!
@@ -150,22 +151,25 @@ const typeDefs = `
     email: String!
   }
   input MessageInput {
-    id: String,
-    to: String,
-    from: String,
-    subject: String,
-    date: String,
-    message: String,
+    id: String!,
+    to: String!,
+    from: String!,
+    subject: String!,
+    date: String!,
+    message: String!,
     attachments: [AttachmentInput]
   }
   input AttachmentInput {
-    fileName: String,
-    mimeType: String,
-    attachmentId: String
+    fileName: String!,
+    mimeType: String!,
+    attachmentId: String!
   }
   input FileInput {
-    name: String
-    link: String
+    name: String!
+    userId: String
+    attachmentId: String!
+    messageId: String!
+    mimeType: String!
   }
   input LocationInput {
     coordinates: [Float!]!

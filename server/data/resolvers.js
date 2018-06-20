@@ -19,7 +19,8 @@ const {
   getMessage,
   getDecodedMessage,
   getAttachment,
-  uploadFile
+  uploadFile,
+  uploadAttachmentToDrive
 } = require("../utils/gmail")
 
 const privateProfileKey = process.env.PRIVATEUSERKEY
@@ -417,6 +418,26 @@ const resolvers = {
           //     address: userLocation.loc.address,
           //     data: userLocation._id
           // }
+          const savedFiles = await Promise.all(
+            files.forEach(
+              ({
+                name: fileName,
+                userId = "",
+                attachmentId,
+                messageId,
+                mimeType
+              }) => {
+                uploadAttachmentToDrive({
+                  attachmentId,
+                  messageId,
+                  fileName,
+                  mimeType,
+                  userId
+                })
+              }
+            )
+          )
+          console.log("addUser resolver savedFiles", savedFiles)
           return await user.save()
         } else return new AuthorizationError()
       } catch (error) {
@@ -429,12 +450,13 @@ const resolvers = {
         })
       }
     },
-    async updateMe(_, { input, location }, { user }) {
+    async updateMe(_, { input, location, messages }, { user }) {
       try {
         // console.log("updateMe mutation resolver, input:", input)
         if (user && user._id) {
           await User.findByIdAndUpdate(user._id, {
             ...input,
+            messages,
             auth0: user.auth0,
             role:
               ((user.role === "newUser" || user.role === "tempUser") &&

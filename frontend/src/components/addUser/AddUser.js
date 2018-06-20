@@ -55,6 +55,8 @@ class AddUser extends Component {
       lastName: "",
       email: "",
       messages: [],
+      files: [],
+      newFiles: [],
       fetchingEmails: false
     }
   }
@@ -75,6 +77,10 @@ class AddUser extends Component {
         }
       }
     )
+  }
+
+  addNewFile = file => {
+    this.setState(state => ({ newFiles: [...state.newFiles, file] }))
   }
 
   getMatchingEmails = () => {
@@ -104,7 +110,7 @@ class AddUser extends Component {
 
   render() {
     const { classes } = this.props
-    const { firstName, lastName, email, messages } = this.state
+    const { firstName, lastName, email, messages, newFiles } = this.state
     return (
       <Mutation
         mutation={ADDUSER}
@@ -138,7 +144,8 @@ class AddUser extends Component {
                       messages: messages.map(message => {
                         const { decoded: { __typename, ...rest } } = message
                         return rest
-                      })
+                      }),
+                      files: newFiles
                     }
                   })
                 }}
@@ -202,7 +209,10 @@ class AddUser extends Component {
                             required
                             className={classes.textField}
                           />
-                          <UserFiles {...this.state} />
+                          <UserFiles
+                            {...this.state}
+                            addNewFile={this.addNewFile}
+                          />
                         </Fragment>
                       )}
                     </CardContent>

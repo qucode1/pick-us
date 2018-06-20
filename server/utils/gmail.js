@@ -150,6 +150,31 @@ const uploadFile = async ({ data, fileName, mimeType, id }) => {
   }
 }
 
+const uploadAttachmentToDrive = async ({
+  attachmentId,
+  messageId,
+  fileName,
+  mimeType,
+  userId = gmailUserId
+}) => {
+  try {
+    const attachment = await getAttachment({
+      attachmentId,
+      messageId,
+      userId
+    })
+    const result = await uploadFile({
+      data: attachment.data.data,
+      fileName,
+      mimeType,
+      id: attachmentId
+    })
+    return result.data
+  } catch (err) {
+    throw err
+  }
+}
+
 const createString = email => `From: qucode info <${email.from}>
 To: <${email.to}>
 Subject: ${email.subject}
@@ -192,5 +217,6 @@ module.exports = {
   getDecodedMessage,
   getAttachment,
   sendMessage,
-  uploadFile
+  uploadFile,
+  uploadAttachmentToDrive
 }

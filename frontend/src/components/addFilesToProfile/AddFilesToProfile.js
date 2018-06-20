@@ -25,14 +25,21 @@ class AddFilesToProfile extends Component {
     this.setState({ value })
   }
   handleClose = () => {
-    this.props.onClose(this.props.selectedValue)
+    this.props.onClose()
   }
   render() {
     const { value } = this.state
-    const { classes, onClose, selectedValue, ...other } = this.props
+    const {
+      classes,
+      onClose,
+      newFiles,
+      newFileName,
+      addNewFile,
+      ...other
+    } = this.props
     return this.props.open ? (
       <Dialog
-        onClose={this.handleClose}
+        onClose={this.props.onClose}
         aria-labelledby="file-source-selection"
         {...other}
       >
@@ -47,7 +54,15 @@ class AddFilesToProfile extends Component {
           <Tab value="gmail" label="Gmail File Picker" />
           <Tab value="local" label="Local File Picker" />
         </Tabs>
-        {value === "gmail" && <GmailFilePicker email={this.props.email} />}
+        {value === "gmail" && (
+          <GmailFilePicker
+            email={this.props.email}
+            newFiles={newFiles}
+            newFileName={newFileName}
+            addNewFile={addNewFile}
+            onClose={onClose}
+          />
+        )}
         {value === "local" && <LocalFilePicker />}
       </Dialog>
     ) : null

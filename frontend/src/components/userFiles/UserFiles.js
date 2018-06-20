@@ -14,10 +14,20 @@ import Select from "@material-ui/core/Select"
 import Loading from "../loading/Loading"
 import AddFilesToProfile from "../addFilesToProfile/AddFilesToProfile"
 
+const fileCategories = [
+  "Lebenslauf",
+  "Führungszeugnis",
+  "Waffensachkunde",
+  "Sachkundeprüfung",
+  "VGS",
+  "AVV"
+]
+
 const styles = theme => ({
   root: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    flexDirection: "column"
   },
   formControl: {
     margin: theme.spacing.unit * 3,
@@ -44,7 +54,8 @@ class UserFiles extends Component {
     super(props)
     this.state = {
       addingFiles: false,
-      newFileType: 10,
+      newFileType: "Lebenslauf",
+      newFileName: "",
       userFiles: props.userFiles || []
     }
   }
@@ -69,6 +80,9 @@ class UserFiles extends Component {
           <Select
             value={this.state.newFileType}
             onChange={this.handleNewFileSelection}
+            error={this.props.newFiles.some(file =>
+              file.name.startsWith(this.state.newFileType)
+            )}
             margin="dense"
             className={`${classes.newFileSelection} ${classes.input}`}
             inputProps={{
@@ -76,16 +90,26 @@ class UserFiles extends Component {
               id: "newFileType"
             }}
           >
-            <MenuItem value={10}>Lebenslauf</MenuItem>
-            <MenuItem value={20}>Zeugnisse</MenuItem>
-            <MenuItem value={30}>Andere</MenuItem>
+            {fileCategories.map(category => (
+              <MenuItem
+                key={category}
+                value={category}
+                disabled={this.props.newFiles.some(file =>
+                  file.name.startsWith(category)
+                )}
+              >
+                {category}
+              </MenuItem>
+            ))}
+            <MenuItem value={0}>Andere</MenuItem>
           </Select>
-          {this.state.newFileType === 30 && (
+          {!this.state.newFileType && (
             <TextField
               id="newFileName"
               name="newFileName"
               label="Dateiname"
               margin="dense"
+              value={this.state.newFileName}
               onChange={this.handleNewFileSelection}
               className={classes.input}
               autoFocus
@@ -98,20 +122,28 @@ class UserFiles extends Component {
               textSecondary: classes.addFileButton,
               label: classes.addFileButtonLabel
             }}
-            disabled={!this.props.email}
+            disabled={
+              !this.props.email ||
+              this.props.newFiles.some(file =>
+                file.name.startsWith(this.state.newFileType)
+              )
+            }
           >
             Datei Auswählen
           </Button>
         </FormControl>
-        {this.state.userFiles.map(id => (
-          <Typography variant="body2" key={id}>
-            {id}
+        {this.props.newFiles.map(file => (
+          <Typography key={file.attachmentId} variant="body1">
+            {file.name}
           </Typography>
         ))}
         <AddFilesToProfile
           open={this.state.addingFiles}
           onClose={this.handleFilePickerClose}
           email={this.props.email}
+          newFiles={this.props.newFiles}
+          addNewFile={this.props.addNewFile}
+          newFileName={this.state.newFileType || this.state.newFileName}
         />
       </div>
     )
