@@ -3,8 +3,12 @@ import gql from "graphql-tag"
 import { UserNameFragment, UserMessagesFragment } from "../fragments/user"
 
 export const ADDUSER = gql`
-  mutation addUser($input: UserInput!, $messages: [MessageInput]) {
-    addUser(input: $input, messages: $messages) {
+  mutation addUser(
+    $input: UserInput!
+    $messages: [MessageInput]
+    $files: [FileInput]
+  ) {
+    addUser(input: $input, messages: $messages, files: $files) {
       id
       email
       ...UserNameFragment

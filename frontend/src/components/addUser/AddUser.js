@@ -142,7 +142,7 @@ class AddUser extends Component {
                     variables: {
                       input: { firstName, lastName, email },
                       messages: messages.map(message => {
-                        const { decoded: { __typename, ...rest } } = message
+                        const { __typename, ...rest } = message
                         return rest
                       }),
                       files: newFiles

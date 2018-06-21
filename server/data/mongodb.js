@@ -16,8 +16,11 @@ const UserSchema = mongoose.Schema({
   createdAt: Date,
   files: [
     {
+      driveId: String,
       name: String,
-      link: String
+      webViewLink: String,
+      thumbnailLink: String,
+      createdAt: Date
     }
   ],
   messages: [

@@ -399,6 +399,7 @@ const resolvers = {
       { idToken, profileToken, user }
     ) {
       try {
+        // const { input, location, files, messages } = args
         if (!idToken) return new AuthenticationError()
         // check for profileToken instead of user,
         // since user will always have at least email and auth0 as
@@ -419,15 +420,15 @@ const resolvers = {
           //     data: userLocation._id
           // }
           const savedFiles = await Promise.all(
-            files.forEach(
-              ({
+            files.map(
+              async ({
                 name: fileName,
-                userId = "",
+                userId,
                 attachmentId,
                 messageId,
                 mimeType
               }) => {
-                uploadAttachmentToDrive({
+                return await uploadAttachmentToDrive({
                   attachmentId,
                   messageId,
                   fileName,
@@ -437,17 +438,19 @@ const resolvers = {
               }
             )
           )
-          console.log("addUser resolver savedFiles", savedFiles)
+          user.files = savedFiles
           return await user.save()
         } else return new AuthorizationError()
       } catch (error) {
-        console.error("addUser mutation catched error", error)
-        return new CustomError({
+        // console.error("addUser mutation catched error", error)
+        const customError = new CustomError({
           message: "addUser mutation resolver error",
           data: {
-            error
+            message: error.message,
+            stack: error.stack
           }
         })
+        return customError
       }
     },
     async updateMe(_, { input, location, messages }, { user }) {

@@ -101,9 +101,12 @@ const typeDefs = `
     user: User
   }
   type File {
+    id: String
+    driveId: String
     name: String
-    link: String
-    date: String
+    webViewLink: String
+    thumbnailLink: String
+    createdAt: String
   }
   type Job {
     id: String

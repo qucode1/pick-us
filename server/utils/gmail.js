@@ -124,6 +124,16 @@ const getAttachment = async ({
   }
 }
 
+const getFileFromDrive = async ({ id }) => {
+  await jwtClient.authorize()
+  const { data } = await drive.files.get({
+    auth: jwtClient,
+    fileId: id,
+    fields: "id, name, webViewLink, thumbnailLink, createdTime"
+  })
+  return data
+}
+
 const uploadFile = async ({ data, fileName, mimeType, id }) => {
   try {
     const writeFile = promisify(fs.writeFile)
@@ -134,17 +144,17 @@ const uploadFile = async ({ data, fileName, mimeType, id }) => {
     }
     const media = {
       mimeType,
-      body: fs.createReadStream(fileName)
+      body: fs.createReadStream(`tempUploads/${fileName}`)
     }
     await jwtClient.authorize()
-    const file = await drive.files.create({
+    const fileData = await drive.files.create({
       auth: jwtClient,
       media,
       resource: fileMetadata,
       fields: "id"
     })
     unlink(`tempUploads/${fileName}`)
-    return file
+    return fileData
   } catch (err) {
     throw err
   }
@@ -163,13 +173,22 @@ const uploadAttachmentToDrive = async ({
       messageId,
       userId
     })
-    const result = await uploadFile({
+    const {
+      data: { id: fileId }
+    } = await uploadFile({
       data: attachment.data.data,
       fileName,
       mimeType,
       id: attachmentId
     })
-    return result.data
+    const {
+      id: driveId,
+      createdTime: createdAt,
+      ...rest
+    } = await getFileFromDrive({
+      id: fileId
+    })
+    return { driveId, ...rest, createdAt }
   } catch (err) {
     throw err
   }
