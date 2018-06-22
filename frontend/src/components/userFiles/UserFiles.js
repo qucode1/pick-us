@@ -11,7 +11,6 @@ import MenuItem from "@material-ui/core/MenuItem"
 import FormControl from "@material-ui/core/FormControl"
 import Select from "@material-ui/core/Select"
 
-import Loading from "../loading/Loading"
 import AddFilesToProfile from "../addFilesToProfile/AddFilesToProfile"
 
 const fileCategories = [
@@ -46,6 +45,9 @@ const styles = theme => ({
     display: "flex",
     justifyItems: "center",
     alignItems: "center"
+  },
+  newFile: {
+    color: "limegreen"
   }
 })
 
@@ -56,7 +58,7 @@ class UserFiles extends Component {
       addingFiles: false,
       newFileType: "Lebenslauf",
       newFileName: "",
-      userFiles: props.userFiles || []
+      savedFiles: props.savedFiles || []
     }
   }
   handleClickOpenFilePicker = () => {
@@ -80,9 +82,9 @@ class UserFiles extends Component {
           <Select
             value={this.state.newFileType}
             onChange={this.handleNewFileSelection}
-            error={this.props.newFiles.some(file =>
-              file.name.startsWith(this.state.newFileType)
-            )}
+            // error={this.props.newFiles.some(file =>
+            //   file.name.startsWith(this.state.newFileType)
+            // )}
             margin="dense"
             className={`${classes.newFileSelection} ${classes.input}`}
             inputProps={{
@@ -94,9 +96,9 @@ class UserFiles extends Component {
               <MenuItem
                 key={category}
                 value={category}
-                disabled={this.props.newFiles.some(file =>
-                  file.name.startsWith(category)
-                )}
+                // disabled={this.props.newFiles.some(file =>
+                //   file.name.startsWith(category)
+                // )}
               >
                 {category}
               </MenuItem>
@@ -122,18 +124,22 @@ class UserFiles extends Component {
               textSecondary: classes.addFileButton,
               label: classes.addFileButtonLabel
             }}
-            disabled={
-              !this.props.email ||
-              this.props.newFiles.some(file =>
-                file.name.startsWith(this.state.newFileType)
-              )
-            }
+            disabled={!this.props.email}
           >
             Datei Auswählen
           </Button>
         </FormControl>
         {this.props.newFiles.map(file => (
-          <Typography key={file.attachmentId} variant="body1">
+          <Typography
+            key={file.attachmentId}
+            variant="body1"
+            className={classes.newFile}
+          >
+            {file.name}
+          </Typography>
+        ))}
+        {this.state.savedFiles.map(file => (
+          <Typography key={file.id} variant="body1">
             {file.name}
           </Typography>
         ))}

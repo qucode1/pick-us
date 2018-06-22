@@ -55,7 +55,6 @@ class AddUser extends Component {
       lastName: "",
       email: "",
       messages: [],
-      files: [],
       newFiles: [],
       fetchingEmails: false
     }

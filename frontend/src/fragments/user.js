@@ -25,16 +25,30 @@ export const UserMessagesFragment = gql`
     }
   }
 `
+
+export const UserFilesFragment = gql`
+  fragment UserFilesFragment on User {
+    files {
+      id
+      driveId
+      name
+      webViewLink
+      thumbnailLink
+      createdAt
+    }
+  }
+`
 export const FullUserProfileFragment = gql`
   fragment FullUserProfileFragment on User {
     id
     ...UserNameFragment
     ...UserAuthFragment
     ...UserMessagesFragment
+    ...UserFilesFragment
     email
-    files
   }
   ${UserNameFragment}
   ${UserAuthFragment}
   ${UserMessagesFragment}
+  ${UserFilesFragment}
 `

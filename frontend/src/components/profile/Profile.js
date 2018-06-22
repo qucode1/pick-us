@@ -7,6 +7,9 @@ import Typography from "material-ui/Typography"
 import TextField from "material-ui/TextField"
 import Button from "material-ui/Button"
 
+import UserFiles from "../userFiles/UserFiles"
+import FormControl from "@material-ui/core/FormControl"
+
 const styles = theme => ({
   card: {
     margin: "auto",
@@ -19,6 +22,14 @@ const styles = theme => ({
   heading: {
     textAlign: "center",
     margin: theme.spacing.unit * 2
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: "200px",
+    [theme.breakpoints.down("xs")]: {
+      width: "95%"
+    }
   }
 })
 
@@ -26,20 +37,17 @@ class Profile extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      firstName: "",
-      lastName: "",
-      email: ""
+      firstName: this.props.firstName || "",
+      lastName: this.props.lastName || "",
+      email: this.props.email || "",
+      messages: this.props.messages || [],
+      savedFiles: this.props.files || [],
+      newFiles: []
     }
     this.handleChange = this.handleChange.bind(this)
     this.updateProfile = this.updateProfile.bind(this)
   }
   componentDidMount() {
-    this.setState({
-      firstName: this.props.firstName || "",
-      lastName: this.props.lastName || "",
-      email: this.props.email || "",
-      messages: this.props.messages || []
-    })
     if (this.props.mutationTarget === "user") {
       this.props.getNewEmails({
         input: {
@@ -57,6 +65,9 @@ class Profile extends Component {
       [e.target.name]: e.target.value
     })
   }
+  addNewFile = file => {
+    this.setState(state => ({ newFiles: [...state.newFiles, file] }))
+  }
   updateProfile() {
     const input = {
       firstName: this.state.firstName,
@@ -67,10 +78,22 @@ class Profile extends Component {
       const { __typename, ...rest } = message
       return rest
     })
+    const savedFiles = this.state.savedFiles.map(file => {
+      const { __typename, ...rest } = file
+      return rest
+    })
     if (this.props.mutationTarget === "me") {
       this.props.update({ variables: { input } })
     } else if (this.props.mutationTarget === "user") {
-      this.props.update({ variables: { input, messages, id: this.props.id } })
+      this.props.update({
+        variables: {
+          id: this.props.id,
+          input,
+          messages,
+          newFiles: this.state.newFiles,
+          savedFiles
+        }
+      })
     }
   }
   render() {
@@ -82,30 +105,43 @@ class Profile extends Component {
         </Typography>
         <Card className={classes.card}>
           <CardContent>
-            <TextField
-              required
-              id="firstName"
-              name="firstName"
-              label="First Name"
-              value={this.state.firstName}
-              onChange={this.handleChange}
-            />
-            <TextField
-              required
-              id="lastName"
-              name="lastName"
-              label="Last Name"
-              value={this.state.lastName}
-              onChange={this.handleChange}
-            />
-            <TextField
-              required
-              id="email"
-              name="email"
-              label="Email"
-              value={this.state.email}
-              onChange={this.handleChange}
-            />
+            <FormControl margin="dense">
+              <div>
+                <TextField
+                  required
+                  id="firstName"
+                  name="firstName"
+                  label="First Name"
+                  margin="dense"
+                  className={classes.textField}
+                  value={this.state.firstName}
+                  onChange={this.handleChange}
+                />
+                <TextField
+                  required
+                  id="lastName"
+                  name="lastName"
+                  label="Last Name"
+                  margin="dense"
+                  className={classes.textField}
+                  value={this.state.lastName}
+                  onChange={this.handleChange}
+                />
+                <TextField
+                  required
+                  id="email"
+                  name="email"
+                  label="Email"
+                  margin="dense"
+                  className={classes.textField}
+                  value={this.state.email}
+                  onChange={this.handleChange}
+                />
+              </div>
+              {this.props.mutationTarget === "user" && (
+                <UserFiles addNewFile={this.addNewFile} {...this.state} />
+              )}
+            </FormControl>
           </CardContent>
           <CardActions>
             <Button

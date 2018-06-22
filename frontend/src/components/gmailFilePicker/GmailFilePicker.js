@@ -11,7 +11,12 @@ import { withStyles } from "@material-ui/core"
 
 const styles = theme => ({
   root: {
-    margin: `${theme.spacing.unit}px`
+    margin: `${theme.spacing.unit / 2}px`
+  },
+  message: {
+    margin: `${theme.spacing.unit}px`,
+    padding: `${theme.spacing.unit / 2}px`,
+    borderBottom: "1px solid #6969691f"
   },
   attachmentButton: {
     textTransform: "none"
@@ -54,7 +59,7 @@ class GmailFilePicker extends Component {
               <div className={classes.root}>
                 {data.emails.messages.length ? (
                   data.emails.messages.map(({ decoded: message }) => (
-                    <div key={message.id}>
+                    <div key={message.id} className={classes.message}>
                       <Typography variant="title">{message.subject}</Typography>
                       <Typography variant="subheading">
                         {message.date}

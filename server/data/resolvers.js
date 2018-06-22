@@ -395,7 +395,7 @@ const resolvers = {
   Mutation: {
     async addUser(
       _,
-      { input, location, files, messages },
+      { input, location, files = [], messages = [] },
       { idToken, profileToken, user }
     ) {
       try {
@@ -479,14 +479,41 @@ const resolvers = {
         })
       }
     },
-    async updateUser(_, { id: _id, input, messages }, { user }) {
+    async updateUser(
+      _,
+      { id: _id, input, messages = [], savedFiles = [], newFiles = [] },
+      { user }
+    ) {
       try {
         if (user && user._id) {
-          await User.findByIdAndUpdate(_id, {
-            ...input,
-            messages
-          })
-          return await User.findById(_id)
+          let user = await User.findById(_id)
+
+          user.firstName = input.firstName
+          user.lastName = input.lastName
+          user.email = input.email
+          user.messages = messages
+
+          const newSavedFiles = await Promise.all(
+            newFiles.map(
+              async ({
+                name: fileName,
+                userId,
+                attachmentId,
+                messageId,
+                mimeType
+              }) => {
+                return await uploadAttachmentToDrive({
+                  attachmentId,
+                  messageId,
+                  fileName,
+                  mimeType,
+                  userId
+                })
+              }
+            )
+          )
+          user.files = [...newSavedFiles, ...savedFiles]
+          return await user.save()
         } else return new AuthorizationError()
       } catch (error) {
         console.error(error)

@@ -4,6 +4,7 @@ import {
   UserNameFragment,
   UserAuthFragment,
   UserMessagesFragment,
+  UserFilesFragment,
   FullUserProfileFragment
 } from "../fragments/user"
 
@@ -20,11 +21,13 @@ export const USER = gql`
       ...UserNameFragment
       ...UserAuthFragment
       ...UserMessagesFragment
+      ...UserFilesFragment
     }
   }
   ${UserNameFragment}
   ${UserAuthFragment}
   ${UserMessagesFragment}
+  ${UserFilesFragment}
 `
 
 export const USERNAME = gql`

@@ -1,6 +1,10 @@
 import gql from "graphql-tag"
 
-import { UserNameFragment, UserMessagesFragment } from "../fragments/user"
+import {
+  UserNameFragment,
+  UserMessagesFragment,
+  UserFilesFragment
+} from "../fragments/user"
 
 export const ADDUSER = gql`
   mutation addUser(
@@ -13,10 +17,12 @@ export const ADDUSER = gql`
       email
       ...UserNameFragment
       ...UserMessagesFragment
+      ...UserFilesFragment
     }
   }
   ${UserNameFragment}
   ${UserMessagesFragment}
+  ${UserFilesFragment}
 `
 
 export const UPDATEUSER = gql`
@@ -24,14 +30,24 @@ export const UPDATEUSER = gql`
     $id: String!
     $input: UserInput!
     $messages: [MessageInput]
+    $newFiles: [FileInput]
+    $savedFiles: [SavedFileInput]
   ) {
-    updateUser(id: $id, input: $input, messages: $messages) {
+    updateUser(
+      id: $id
+      input: $input
+      messages: $messages
+      savedFiles: $savedFiles
+      newFiles: $newFiles
+    ) {
       id
       email
       ...UserNameFragment
       ...UserMessagesFragment
+      ...UserFilesFragment
     }
   }
   ${UserNameFragment}
   ${UserMessagesFragment}
+  ${UserFilesFragment}
 `
