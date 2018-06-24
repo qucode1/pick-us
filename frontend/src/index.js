@@ -38,6 +38,9 @@ const theme = createMuiTheme({
     secondary: {
       main: "rgb(34, 187, 141)"
     }
+  },
+  spacing: {
+    drawerWidth: "250px"
   }
 })
 

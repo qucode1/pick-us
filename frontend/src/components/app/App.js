@@ -21,17 +21,19 @@ import UserProfile from "../userProfile/UserProfile"
 import logo from "../../bgLogo.svg"
 
 import { withStyles } from "@material-ui/core/styles"
+import Navigation from "../navigation/Navigation"
 
 const styles = theme => ({
   root: {
     height: "100%",
     minHeight: "100vH",
-    backgroundColor: "rgba(61, 110, 191, .05)"
+    backgroundColor: "rgba(61, 110, 191, .05)",
+    position: "relative"
   },
   background: {
     position: "absolute",
     height: "100%",
-    width: "100vW",
+    width: "100%",
     zIndex: "-1",
     backgroundImage: `url("${logo}")`,
     backgroundSize: "80vH",
@@ -40,7 +42,13 @@ const styles = theme => ({
     backgroundAttachment: "fixed",
     backgroundPosition: "center",
     filter: "opacity(.1) drop-shadow(1px 1px 3px dimgrey)"
-  }
+  },
+  main: {
+    [theme.breakpoints.up("md")]: {
+      marginLeft: theme.spacing.drawerWidth
+    }
+  },
+  toolbar: theme.mixins.toolbar
 })
 
 class App extends Component {
@@ -51,7 +59,8 @@ class App extends Component {
       error: null,
       addedUser: undefined,
       firstLogin: true,
-      newUserEmailHistory: []
+      newUserEmailHistory: [],
+      mobileNavOpen: false
     }
     this.logout = this.logout.bind(this)
     this.setError = this.setError.bind(this)
@@ -74,6 +83,11 @@ class App extends Component {
   setNewUserEmailHistory = (emails = []) => {
     this.setState({
       newUserEmailHistory: emails
+    })
+  }
+  toggleMobileNav = () => {
+    this.setState({
+      mobileNavOpen: !this.state.mobileNavOpen
     })
   }
   login = async () => {
@@ -142,37 +156,45 @@ class App extends Component {
             login={this.login}
             logout={this.logout}
             isLoggedIn={this.state.isLoggedIn}
+            toggleMobileNav={this.toggleMobileNav}
           />
-          <Route
-            exact
-            path="/"
-            component={this.state.isLoggedIn ? Dashboard : Landing}
+          <Navigation
+            mobileNavOpen={this.state.mobileNavOpen}
+            toggleMobileNav={this.toggleMobileNav}
           />
-          <Switch>
-            <PrivateRoute exact path="/profile" component={MyProfile} />
-            <PrivateRoute exact path="/users/add" component={AddUser} />
-            <PrivateRoute
-              exact
-              path="/users/add/success"
-              component={AddedUser}
-            />
-            <PrivateRoute exact path="/users/:id" component={UserProfile} />
-            <PrivateRoute exact path="/callback" component={Callback} />
-            <Route exact path="/error" component={ErrorComponent} />
+          <main className={this.props.classes.main}>
+            <div className={this.props.classes.toolbar} />
             <Route
               exact
-              path="/login"
-              render={() => <Login login={this.login} />}
+              path="/"
+              component={this.state.isLoggedIn ? Dashboard : Landing}
             />
-            <Route exact path="/logout" render={() => <Redirect to="/" />} />
-            <Route
-              exact
-              path="/:anythingElse"
-              render={() => (
-                <ErrorComponent errorProp="There is nothing to see here :(" />
-              )}
-            />
-          </Switch>
+            <Switch>
+              <PrivateRoute exact path="/profile" component={MyProfile} />
+              <PrivateRoute exact path="/users/add" component={AddUser} />
+              <PrivateRoute
+                exact
+                path="/users/add/success"
+                component={AddedUser}
+              />
+              <PrivateRoute exact path="/users/:id" component={UserProfile} />
+              <PrivateRoute exact path="/callback" component={Callback} />
+              <Route exact path="/error" component={ErrorComponent} />
+              <Route
+                exact
+                path="/login"
+                render={() => <Login login={this.login} />}
+              />
+              <Route exact path="/logout" render={() => <Redirect to="/" />} />
+              <Route
+                exact
+                path="/:anythingElse"
+                render={() => (
+                  <ErrorComponent errorProp="There is nothing to see here :(" />
+                )}
+              />
+            </Switch>
+          </main>
         </div>
       </MyContext.Provider>
     )

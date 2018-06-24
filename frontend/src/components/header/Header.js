@@ -11,6 +11,7 @@ import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
 import Button from "@material-ui/core/Button"
+import Hidden from "@material-ui/core/Hidden"
 import Typography from "@material-ui/core/Typography"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
@@ -22,6 +23,9 @@ import { MYNAME } from "../../queries/me"
 const styles = theme => ({
   root: {
     flexGrow: 1
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1
   },
   flex: {
     flex: 1
@@ -83,85 +87,91 @@ class Header extends Component {
                 )
               } else {
                 return (
-                  <header className={this.props.classes.root}>
-                    <AppBar position="static">
-                      <Toolbar>
-                        {this.props.isLoggedIn && (
+                  // <header className={this.props.classes.root}>
+                  <AppBar
+                    position="fixed"
+                    className={this.props.classes.appBar}
+                  >
+                    <Toolbar>
+                      {this.props.isLoggedIn && (
+                        <Hidden mdUp>
                           <IconButton
                             className={this.props.classes.menuButton}
                             color="inherit"
                             aria-label="Menu"
+                            onClick={this.props.toggleMobileNav}
                           >
                             =
                           </IconButton>
-                        )}
-                        {/* <img
+                        </Hidden>
+                      )}
+                      {/* <img
                         src={pickUsLogo}
                         className={this.props.classes.logo}
                         alt="logo"
                       /> */}
-                        <Typography
-                          variant="title"
-                          color="inherit"
-                          className={this.props.classes.flex}
-                        >
-                          Pick Us NRW
-                        </Typography>
-                        {this.props.isLoggedIn && (
-                          <Fragment>
-                            <IconButton
-                              // component={Link}
-                              // to="/profile"
-                              color="inherit"
-                              aria-owns={anchorEl ? "User Menu" : null}
-                              aria-haspopup="true"
-                              onClick={this.handleUserMenuClick}
+                      <Typography
+                        variant="title"
+                        color="inherit"
+                        className={this.props.classes.flex}
+                      >
+                        Pick Us NRW
+                      </Typography>
+                      {this.props.isLoggedIn && (
+                        <Fragment>
+                          <IconButton
+                            // component={Link}
+                            // to="/profile"
+                            color="inherit"
+                            aria-owns={anchorEl ? "User Menu" : null}
+                            aria-haspopup="true"
+                            onClick={this.handleUserMenuClick}
+                          >
+                            {data.me.firstName[0]}
+                            {data.me.lastName[0]}
+                          </IconButton>
+                          <Menu
+                            id="userMenu"
+                            anchorEl={anchorEl}
+                            open={!!anchorEl}
+                            onClose={this.handleUserMenuClose}
+                          >
+                            <MenuItem
+                              component={Link}
+                              to="/"
+                              onClick={this.handleUserMenuClose}
                             >
-                              {data.me.firstName[0]}
-                              {data.me.lastName[0]}
-                            </IconButton>
-                            <Menu
-                              id="userMenu"
-                              anchorEl={anchorEl}
-                              open={!!anchorEl}
-                              onClose={this.handleUserMenuClose}
+                              Dashboard
+                            </MenuItem>
+                            <MenuItem
+                              component={Link}
+                              to="/profile"
+                              onClick={this.handleUserMenuClose}
                             >
-                              <MenuItem
-                                component={Link}
-                                to="/"
-                                onClick={this.handleUserMenuClose}
-                              >
-                                Dashboard
-                              </MenuItem>
-                              <MenuItem
-                                component={Link}
-                                to="/profile"
-                                onClick={this.handleUserMenuClose}
-                              >
-                                Profile
-                              </MenuItem>
-                              <MenuItem
-                                className={this.props.classes.logoutText}
-                                onClick={this.handleUserMenuLogout}
-                              >
-                                Logout
-                              </MenuItem>
-                            </Menu>
-                          </Fragment>
-                        )}
-                        <Button
-                          color="inherit"
-                          onClick={
-                            this.props.isLoggedIn
-                              ? this.props.logout
-                              : this.props.login
-                          }
-                        >
-                          {this.props.isLoggedIn ? "Logout" : "Login"}
-                        </Button>
-                      </Toolbar>
-                    </AppBar>
-                  </header>
+                              Profile
+                            </MenuItem>
+                            <MenuItem
+                              className={this.props.classes.logoutText}
+                              onClick={this.handleUserMenuLogout}
+                            >
+                              Logout
+                            </MenuItem>
+                          </Menu>
+                        </Fragment>
+                      )}
+                      <Button
+                        color="inherit"
+                        onClick={
+                          this.props.isLoggedIn
+                            ? this.props.logout
+                            : this.props.login
+                        }
+                      >
+                        {this.props.isLoggedIn ? "Logout" : "Login"}
+                      </Button>
+                    </Toolbar>
+                  </AppBar>
+                  // </header>
                 )
               }
             }}
