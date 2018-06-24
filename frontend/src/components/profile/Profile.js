@@ -1,24 +1,19 @@
 import React, { Fragment, Component } from "react"
 import { Link } from "react-router-dom"
 
-import { withStyles } from "material-ui/styles"
-import Card, { CardActions, CardContent } from "material-ui/Card"
-import Typography from "material-ui/Typography"
-import TextField from "material-ui/TextField"
-import Button from "material-ui/Button"
-
-import UserFiles from "../userFiles/UserFiles"
+import { withStyles } from "@material-ui/core/styles"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Typography from "@material-ui/core/Typography"
+import TextField from "@material-ui/core/TextField"
+import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
 
+import UserFiles from "../userFiles/UserFiles"
+
+import StyledCard from "../styledCard/StyledCard"
+
 const styles = theme => ({
-  card: {
-    margin: "auto",
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
-  },
   heading: {
     textAlign: "center",
     margin: theme.spacing.unit * 2
@@ -103,7 +98,7 @@ class Profile extends Component {
         <Typography variant="display1" className={classes.heading}>
           Profile
         </Typography>
-        <Card className={classes.card}>
+        <StyledCard>
           <CardContent>
             <FormControl margin="dense">
               <div>
@@ -155,7 +150,7 @@ class Profile extends Component {
               Home
             </Button>
           </CardActions>
-        </Card>
+        </StyledCard>
       </Fragment>
     )
   }

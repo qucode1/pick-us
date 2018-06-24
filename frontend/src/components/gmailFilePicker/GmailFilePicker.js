@@ -2,12 +2,15 @@ import React, { Fragment, Component } from "react"
 import { Query } from "react-apollo"
 import { Redirect } from "react-router-dom"
 
-import { EMAILSWITHATTACHMENT } from "../../queries/email"
 import { MyContext } from "../../utils/contextProvider"
-import Loading from "../loading/Loading"
+
+import { withStyles } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
 import Button from "@material-ui/core/Button"
-import { withStyles } from "@material-ui/core"
+
+import Loading from "../loading/Loading"
+
+import { EMAILSWITHATTACHMENT } from "../../queries/email"
 
 const styles = theme => ({
   root: {

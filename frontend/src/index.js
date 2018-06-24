@@ -7,8 +7,8 @@ import { BrowserRouter as Router } from "react-router-dom"
 
 import "./index.css"
 
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider" // add
-import { createMuiTheme } from "material-ui/styles"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider" // add
+import { createMuiTheme } from "@material-ui/core/styles"
 
 import App from "./components/app/App"
 

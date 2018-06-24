@@ -3,23 +3,18 @@ import { Link } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
-import { withStyles } from "material-ui/styles"
-import Typography from "material-ui/Typography"
-import Card, { CardActions, CardContent } from "material-ui/Card"
-import Button from "material-ui/Button"
-import lightGreen from "material-ui/colors/lightGreen"
+import { withStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Button from "@material-ui/core/Button"
+import lightGreen from "@material-ui/core/colors/lightGreen"
+
+import StyledCard from "../styledCard/StyledCard"
 
 const success = lightGreen[500]
 
 const styles = theme => ({
-  card: {
-    margin: "auto",
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
-  },
   message: {
     color: success
   },
@@ -38,7 +33,7 @@ const AddedUser = ({ classes }) => (
       {({
         state: { addedUser: { firstName, lastName, id } = {}, setAddedUser }
       }) => (
-        <Card className={classes.card}>
+        <StyledCard>
           <CardContent>
             <Typography variant="subheading" className={classes.message}>
               {firstName ? `${firstName} ${lastName}` : "User"} successfully
@@ -61,7 +56,7 @@ const AddedUser = ({ classes }) => (
               Home
             </Button>
           </CardActions>
-        </Card>
+        </StyledCard>
       )}
     </MyContext.Consumer>
   </Fragment>

@@ -1,25 +1,18 @@
 import React, { Component } from "react"
 
-import { withStyles } from "material-ui/styles"
-import Typography from "material-ui/Typography"
-import Button from "material-ui/Button"
-import Card, { CardContent } from "material-ui/Card"
+import { withStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
+import Button from "@material-ui/core/Button"
+import CardContent from "@material-ui/core/CardContent"
 
 import Loading from "../loading/Loading"
+import StyledCard from "../styledCard/StyledCard"
 
 const styles = theme => ({
-  card: {
-    // position: "relative",
-    margin: `${theme.spacing.unit * 2}px auto`,
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
-  },
   emailHistoryMessage: {
     borderRadius: "2px",
     padding: theme.spacing.unit,
+    margin: `${theme.spacing.unit}px 0`,
     borderBottom: "1px solid #6969691f"
     // "&:nth-of-type(odd)": {
     //   backgroundColor: "rgba(61, 110, 191, .05)"
@@ -63,7 +56,7 @@ class EmailHistory extends Component {
   render() {
     const { messages, fetchingEmails, classes, email } = this.props
     return (
-      <Card className={classes.card}>
+      <StyledCard>
         <CardContent style={{ position: "relative", minHeight: "50px" }}>
           <Typography variant="title">Emailverlauf</Typography>
           {messages &&
@@ -81,41 +74,41 @@ class EmailHistory extends Component {
                 <div className={classes.messageHeader}>
                   <div className={classes.messageInfo}>
                     <Typography
-                      variant="caption"
+                      variant="subheading"
                       className={classes.messageCategory}
                     >
                       Von
                     </Typography>
-                    <Typography variant="caption">{message.from}</Typography>
+                    <Typography variant="body1">{message.from}</Typography>
                   </div>
                   <div className={classes.messageInfo}>
                     <Typography
-                      variant="caption"
+                      variant="subheading"
                       className={classes.messageCategory}
                     >
                       Betreff
                     </Typography>
-                    <Typography variant="caption">{message.subject}</Typography>
+                    <Typography variant="body1">{message.subject}</Typography>
                   </div>
                   <div className={classes.messageInfo}>
                     <Typography
-                      variant="caption"
+                      variant="subheading"
                       className={classes.messageCategory}
                     >
                       Datum
                     </Typography>
-                    <Typography variant="caption">{message.date}</Typography>
+                    <Typography variant="body1">{message.date}</Typography>
                   </div>
                 </div>
                 <div className={classes.content}>
                   <Typography
-                    variant="caption"
+                    variant="subheading"
                     className={classes.messageCategory}
                   >
                     Nachricht
                   </Typography>
                   <Typography
-                    variant="caption"
+                    variant="body1"
                     // dangerouslySetInnerHTML={{
                     //   __html:
                     //     message.message.length > 100 &&
@@ -144,7 +137,7 @@ class EmailHistory extends Component {
             ))}
           {fetchingEmails && <Loading />}
         </CardContent>
-      </Card>
+      </StyledCard>
     )
   }
 }

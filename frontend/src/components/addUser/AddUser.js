@@ -4,14 +4,16 @@ import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
-import { withStyles } from "material-ui/styles"
-import Typography from "material-ui/Typography"
-import Card, { CardActions, CardContent } from "material-ui/Card"
-import Button from "material-ui/Button"
-import TextField from "material-ui/TextField"
+import { withStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Button from "@material-ui/core/Button"
+import TextField from "@material-ui/core/TextField"
 import FormControl from "@material-ui/core/FormControl"
 
 import Loading from "../loading/Loading"
+import StyledCard from "../styledCard/StyledCard"
 import EmailHistory from "../emailHistory/EmailHistory"
 import UserFiles from "../userFiles/UserFiles"
 
@@ -23,15 +25,6 @@ const styles = theme => ({
   root: {
     display: "flex",
     flexWrap: "wrap"
-  },
-  card: {
-    // position: "relative",
-    margin: `${theme.spacing.unit * 2}px auto`,
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
   },
   heading: {
     textAlign: "center",
@@ -149,7 +142,7 @@ class AddUser extends Component {
                   })
                 }}
               >
-                <Card className={classes.card}>
+                <StyledCard>
                   <FormControl margin="dense">
                     {loading && <Loading />}
                     {error && (
@@ -237,7 +230,7 @@ class AddUser extends Component {
                       </Button>
                     </CardActions>
                   </FormControl>
-                </Card>
+                </StyledCard>
               </form>
               <EmailHistory
                 fetchingEmails={this.state.fetchingEmails}

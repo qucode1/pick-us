@@ -4,24 +4,18 @@ import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
-import { withStyles } from "material-ui/styles"
-import Typography from "material-ui/Typography"
-import Card, { CardActions, CardContent } from "material-ui/Card"
-import Button from "material-ui/Button"
+import { withStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Button from "@material-ui/core/Button"
 
 import LatestUsers from "../latestUsers/LatestUsers"
+import StyledCard from "../styledCard/StyledCard"
 
 import { ME } from "../../queries/me"
 
 const styles = theme => ({
-  card: {
-    margin: "auto",
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
-  },
   heading: {
     textAlign: "center",
     margin: theme.spacing.unit * 2
@@ -60,7 +54,7 @@ const Dashboard = props => {
                 <Typography className={classes.heading} variant="display1">
                   Dashboard
                 </Typography>
-                <Card className={classes.card}>
+                <StyledCard>
                   <CardContent>
                     <Typography variant="title">
                       {data.me.firstName} {data.me.lastName}
@@ -75,7 +69,7 @@ const Dashboard = props => {
                       Profile
                     </Button>
                   </CardActions>
-                </Card>
+                </StyledCard>
                 <LatestUsers />
               </Fragment>
             )

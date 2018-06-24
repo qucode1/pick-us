@@ -2,20 +2,17 @@ import React, { Fragment } from "react"
 
 import { MyContext } from "../../utils/contextProvider"
 
-import { withStyles } from "material-ui/styles"
-import Typography from "material-ui/Typography"
-import Card, { CardActions, CardContent } from "material-ui/Card"
-import Button from "material-ui/Button"
+import { withStyles } from "@material-ui/core/styles"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Button from "@material-ui/core/Button"
+
+import StyledCard from "../styledCard/StyledCard"
 
 const styles = theme => ({
-  card: {
-    textAlign: "center",
-    margin: "auto",
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
+  content: {
+    textAlign: "center"
   },
   heading: {
     textAlign: "center",
@@ -31,8 +28,8 @@ const Landing = ({ classes }) => (
     <Typography className={classes.heading} variant="display1">
       Pick Us NRW - Job Platform
     </Typography>
-    <Card className={classes.card}>
-      <CardContent>
+    <StyledCard>
+      <CardContent className={classes.content}>
         <Typography variant="title">
           Willkommen auf unserer Job Platform!
         </Typography>
@@ -50,7 +47,7 @@ const Landing = ({ classes }) => (
           )}
         </MyContext.Consumer>
       </CardActions>
-    </Card>
+    </StyledCard>
   </Fragment>
 )
 

@@ -3,20 +3,15 @@ import { Link, Redirect } from "react-router-dom"
 
 import { MyContext } from "../../utils/contextProvider"
 
-import { withStyles } from "material-ui/styles"
-import Card, { CardContent, CardActions } from "material-ui/Card"
-import Typography from "material-ui/Typography"
-import Button from "material-ui/Button"
+import { withStyles } from "@material-ui/core/styles"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Typography from "@material-ui/core/Typography"
+import Button from "@material-ui/core/Button"
+
+import StyledCard from "../styledCard/StyledCard"
 
 const styles = theme => ({
-  card: {
-    margin: "auto",
-    width: "75%",
-    maxWidth: "800px",
-    [theme.breakpoints.down("md")]: {
-      width: "95%"
-    }
-  },
   heading: {
     textAlign: "center",
     margin: theme.spacing.unit * 2
@@ -28,7 +23,7 @@ const ErrorComponent = ({ classes, errorProp }) => (
     <Typography className={classes.heading} variant="display1">
       Error
     </Typography>
-    <Card className={classes.card}>
+    <StyledCard>
       <CardContent>
         <MyContext.Consumer>
           {({ state: { error } }) => {
@@ -58,7 +53,7 @@ const ErrorComponent = ({ classes, errorProp }) => (
           Home
         </Button>
       </CardActions>
-    </Card>
+    </StyledCard>
   </Fragment>
 )
 

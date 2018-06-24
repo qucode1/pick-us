@@ -20,7 +20,7 @@ import UserProfile from "../userProfile/UserProfile"
 
 import logo from "../../bgLogo.svg"
 
-import { withStyles } from "material-ui/styles"
+import { withStyles } from "@material-ui/core/styles"
 
 const styles = theme => ({
   root: {
