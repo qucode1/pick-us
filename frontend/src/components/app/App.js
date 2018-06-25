@@ -1,27 +1,18 @@
 import React, { Component } from "react"
-import { Route, Switch, Redirect, withRouter } from "react-router-dom"
+import { withRouter } from "react-router-dom"
 import gql from "graphql-tag"
-
-import "./App.css"
 import Lock, { loginUser, logoutUser } from "../../utils/auth"
 import { withApollo } from "react-apollo"
-import { MyContext } from "../../utils/contextProvider"
-import PrivateRoute from "../../utils/PrivateRoute"
 
-import Callback from "../callback/Callback"
-import Dashboard from "../dashboard/Dashboard"
-import MyProfile from "../myProfile/myProfile"
-import Landing from "../landing/Landing"
-import ErrorComponent from "../error/Error"
+import { MyContext } from "../../utils/contextProvider"
+
 import Header from "../header/Header"
-import AddUser from "../addUser/AddUser"
-import AddedUser from "../addedUser/AddedUser"
-import UserProfile from "../userProfile/UserProfile"
+import Navigation from "../navigation/Navigation"
+import Router from "../router/Router"
 
 import logo from "../../bgLogo.svg"
 
 import { withStyles } from "@material-ui/core/styles"
-import Navigation from "../navigation/Navigation"
 
 const styles = theme => ({
   root: {
@@ -43,7 +34,7 @@ const styles = theme => ({
     backgroundPosition: "center",
     filter: "opacity(.1) drop-shadow(1px 1px 3px dimgrey)"
   },
-  main: {
+  mainWithNav: {
     [theme.breakpoints.up("md")]: {
       marginLeft: theme.spacing.drawerWidth
     }
@@ -158,55 +149,21 @@ class App extends Component {
             isLoggedIn={this.state.isLoggedIn}
             toggleMobileNav={this.toggleMobileNav}
           />
-          <Navigation
-            mobileNavOpen={this.state.mobileNavOpen}
-            toggleMobileNav={this.toggleMobileNav}
-          />
-          <main className={this.props.classes.main}>
-            <div className={this.props.classes.toolbar} />
-            <Route
-              exact
-              path="/"
-              component={this.state.isLoggedIn ? Dashboard : Landing}
+          {this.state.isLoggedIn && (
+            <Navigation
+              mobileNavOpen={this.state.mobileNavOpen}
+              toggleMobileNav={this.toggleMobileNav}
             />
-            <Switch>
-              <PrivateRoute exact path="/profile" component={MyProfile} />
-              <PrivateRoute exact path="/users/add" component={AddUser} />
-              <PrivateRoute
-                exact
-                path="/users/add/success"
-                component={AddedUser}
-              />
-              <PrivateRoute exact path="/users/:id" component={UserProfile} />
-              <PrivateRoute exact path="/callback" component={Callback} />
-              <Route exact path="/error" component={ErrorComponent} />
-              <Route
-                exact
-                path="/login"
-                render={() => <Login login={this.login} />}
-              />
-              <Route exact path="/logout" render={() => <Redirect to="/" />} />
-              <Route
-                exact
-                path="/:anythingElse"
-                render={() => (
-                  <ErrorComponent errorProp="There is nothing to see here :(" />
-                )}
-              />
-            </Switch>
+          )}
+          <main
+            className={this.state.isLoggedIn && this.props.classes.mainWithNav}
+          >
+            <div className={this.props.classes.toolbar} />
+            <Router isLoggedIn={this.state.isLoggedIn} />
           </main>
         </div>
       </MyContext.Provider>
     )
-  }
-}
-
-class Login extends Component {
-  componentDidMount() {
-    this.props.login()
-  }
-  render() {
-    return <p>Logging in...</p>
   }
 }
 
