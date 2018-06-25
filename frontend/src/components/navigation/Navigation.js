@@ -19,7 +19,7 @@ class Navigation extends Component {
   }
   render() {
     return (
-      <nav>
+      <Fragment>
         <Hidden mdUp>
           <Drawer
             variant="temporary"
@@ -43,7 +43,7 @@ class Navigation extends Component {
             <NavigationMenu />
           </Drawer>
         </Hidden>
-      </nav>
+      </Fragment>
     )
   }
 }
