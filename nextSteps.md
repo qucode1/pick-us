@@ -1,7 +1,7 @@
 # Next Steps
 
-- add links of uploaded files after adding or updating a user
-- add local file upload
+- add local file upload (how do i read the files from react-dropzone?)
+- add file type & size restrictions
 - add locations to users
 - create UserList with Search and Sort
 - add job schema, resolvers, components

@@ -5,6 +5,9 @@ import { Link, Redirect } from "react-router-dom"
 import { MyContext } from "../../utils/contextProvider"
 
 import { withStyles } from "@material-ui/core/styles"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemText from "@material-ui/core/ListItemText"
 import Typography from "@material-ui/core/Typography"
 import CardContent from "@material-ui/core/CardContent"
 import CardActions from "@material-ui/core/CardActions"
@@ -47,19 +50,20 @@ const LatestUsers = ({ classes }) => {
               <StyledCard>
                 <CardContent>
                   <Typography variant="title">Neuste Nutzer:</Typography>
-                  {allUsers.map(user => (
-                    <Fragment key={user.id}>
-                      <Button
-                        color="primary"
+                  <List disablePadding>
+                    {allUsers.map(user => (
+                      <ListItem
+                        key={user.id}
+                        button
                         component={Link}
                         to={`/users/${user.id}`}
                       >
-                        <Typography variant="subheading">
-                          {user.firstName} {user.lastName} - {user.email}
-                        </Typography>
-                      </Button>
-                    </Fragment>
-                  ))}
+                        <ListItemText
+                          primary={`${user.firstName} ${user.lastName}`}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
                 </CardContent>
                 <CardActions>
                   <Button

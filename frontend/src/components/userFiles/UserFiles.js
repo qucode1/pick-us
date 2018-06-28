@@ -1,6 +1,4 @@
-import React, { Fragment, Component } from "react"
-import { Mutation, withApollo } from "react-apollo"
-import { Link, Redirect } from "react-router-dom"
+import React, { Component } from "react"
 
 import { withStyles } from "@material-ui/core/styles"
 import Typography from "@material-ui/core/Typography"
@@ -63,11 +61,8 @@ class UserFiles extends Component {
   handleClickOpenFilePicker = () => {
     this.setState({ addingFiles: true })
   }
-  handleNewFileSelection = e => {
+  handleNewFileChange = e => {
     this.setState({ [e.target.name]: e.target.value })
-  }
-  handleNewFileName = e => {
-    this.setState({ [e.target.id]: e.target.value })
   }
   handleFilePickerClose = () => {
     this.setState({ addingFiles: false })
@@ -80,10 +75,7 @@ class UserFiles extends Component {
           <Typography variant="title">Dateien</Typography>
           <Select
             value={this.state.newFileType}
-            onChange={this.handleNewFileSelection}
-            // error={this.props.newFiles.some(file =>
-            //   file.name.startsWith(this.state.newFileType)
-            // )}
+            onChange={this.handleNewFileChange}
             margin="dense"
             className={`${classes.newFileSelection} ${classes.input}`}
             inputProps={{
@@ -92,13 +84,7 @@ class UserFiles extends Component {
             }}
           >
             {fileCategories.map(category => (
-              <MenuItem
-                key={category}
-                value={category}
-                // disabled={this.props.newFiles.some(file =>
-                //   file.name.startsWith(category)
-                // )}
-              >
+              <MenuItem key={category} value={category}>
                 {category}
               </MenuItem>
             ))}
@@ -111,7 +97,7 @@ class UserFiles extends Component {
               label="Dateiname"
               margin="dense"
               value={this.state.newFileName}
-              onChange={this.handleNewFileSelection}
+              onChange={this.handleNewFileChange}
               className={classes.input}
               autoFocus
             />

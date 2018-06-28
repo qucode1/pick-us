@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from "react"
+import React, { Component } from "react"
 
 import Dialog from "@material-ui/core/Dialog"
 import Tabs from "@material-ui/core/Tabs"

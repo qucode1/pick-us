@@ -1,5 +1,6 @@
 import React from "react"
+import UserFileDropzone from "../userFileDropzone/UserFileDropzone"
 
-const LocalFilePicker = () => <h4>LocalFilePicker</h4>
+const LocalFilePicker = () => <UserFileDropzone />
 
 export default LocalFilePicker

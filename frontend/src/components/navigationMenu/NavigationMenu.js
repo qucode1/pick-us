@@ -1,4 +1,4 @@
-import React, { Fragment } from "react"
+import React from "react"
 import { NavLink } from "react-router-dom"
 import { withStyles } from "@material-ui/core/styles"
 import List from "@material-ui/core/List"
@@ -43,7 +43,12 @@ const NavigationMenu = props => {
         </ListItemIcon>
         <ListItemText primary="Profile" />
       </ListItem>
-      <ListItem button activeClassName={props.classes.activeNavLink}>
+      <ListItem
+        button
+        component={NavLink}
+        to="/users"
+        activeClassName={props.classes.activeNavLink}
+      >
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
