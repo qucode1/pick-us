@@ -41,10 +41,14 @@ const styles = theme => ({
   files: {
     display: "flex",
     justifyItems: "center",
-    alignItems: "center"
+    alignItems: "flex-start",
+    flexDirection: "column"
   },
   newFile: {
-    color: "limegreen"
+    color: "limegreen",
+    "&:disabled": {
+      color: "limegreen"
+    }
   }
 })
 
@@ -114,20 +118,27 @@ class UserFiles extends Component {
             Datei Auswählen
           </Button>
         </FormControl>
-        {this.props.newFiles.map(file => (
-          <Typography
-            key={file.attachmentId}
-            variant="body1"
-            className={classes.newFile}
-          >
-            {file.name}
-          </Typography>
-        ))}
-        {this.state.savedFiles.map(file => (
-          <Typography key={file.id} variant="body1">
-            {file.name}
-          </Typography>
-        ))}
+        <div className={classes.files}>
+          {this.props.newFiles.map(file => (
+            <Button
+              className={classes.newFile}
+              key={file.attachmentId}
+              disabled
+            >
+              {file.name}
+            </Button>
+          ))}
+          {this.state.savedFiles.map(file => (
+            <Button
+              key={file.id}
+              href={file.webViewLink}
+              target="_blank"
+              rel="noopener"
+            >
+              {file.name}
+            </Button>
+          ))}
+        </div>
         <AddFilesToProfile
           open={this.state.addingFiles}
           onClose={this.handleFilePickerClose}
