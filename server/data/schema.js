@@ -2,6 +2,7 @@ const { makeExecutableSchema } = require("graphql-tools")
 const resolvers = require("./resolvers")
 
 const typeDefs = `
+  scalar Upload
   type Query {
     me: Me
     user(id: String, firstName: String, lastName: String, email: String, auth0: String): User
@@ -80,7 +81,7 @@ const typeDefs = `
     auth0: String
     role: String
     location: LocationRef
-    files: [File]
+    files: [SavedFile]
     messages: [DecodedMessage]
     profileToken: String
     publicKey: String
@@ -93,14 +94,14 @@ const typeDefs = `
     auth0: String
     role: String
     location: LocationRef
-    files: [File]
+    files: [SavedFile]
     messages: [DecodedMessage]
   }
   type nearbyUser {
     distance: Float,
     user: User
   }
-  type File {
+  type SavedFile {
     id: String
     driveId: String
     name: String
@@ -174,6 +175,10 @@ const typeDefs = `
     messageId: String!
     mimeType: String!
   }
+  input LocalFileInput {
+    name: String!
+    localFile: Upload!
+  }
   input SavedFileInput {
     id: String
     driveId: String
@@ -191,9 +196,9 @@ const typeDefs = `
     description: String!
   }
   type Mutation {
-    addUser(input: UserInput!, location: LocationInput, files: [FileInput], messages: [MessageInput]): User
+    addUser(input: UserInput!, location: LocationInput, files: [FileInput], localFiles: [LocalFileInput!] messages: [MessageInput]): User
     updateMe(input: UserInput!, location: LocationInput): Me
-    updateUser(id: String!, input: UserInput!, location: LocationInput, messages: [MessageInput], savedFiles: [SavedFileInput], newFiles: [FileInput]): User
+    updateUser(id: String!, input: UserInput!, location: LocationInput, messages: [MessageInput], savedFiles: [SavedFileInput], newFiles: [FileInput], newLocalFiles: [LocalFileInput!]): User
     addJob(input: JobInput!, locations: [LocationInput!]!): Job
     uploadAttachmentToDrive(attachmentId: String!, messageId: String!, fileName: String!, mimeType: String!, userId: String): DriveFile
   }

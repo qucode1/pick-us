@@ -57,13 +57,19 @@ class AddFilesToProfile extends Component {
         {value === "gmail" && (
           <GmailFilePicker
             email={this.props.email}
-            newFiles={newFiles}
             newFileName={newFileName}
             addNewFile={addNewFile}
             onClose={onClose}
           />
         )}
-        {value === "local" && <LocalFilePicker />}
+        {value === "local" && (
+          <LocalFilePicker
+            email={this.props.email}
+            newFileName={newFileName}
+            addNewFile={addNewFile}
+            onClose={onClose}
+          />
+        )}
       </Dialog>
     ) : null
   }

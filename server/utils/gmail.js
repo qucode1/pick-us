@@ -160,11 +160,32 @@ const uploadFile = async ({ data, fileName, mimeType, id }) => {
   }
 }
 
+const uploadLocalFile = async ({ name, mimetype: mimeType, stream }) => {
+  try {
+    const fileMetadata = {
+      name
+    }
+    const media = {
+      mimeType,
+      body: stream
+    }
+    await jwtClient.authorize()
+    const fileData = await drive.files.create({
+      auth: jwtClient,
+      media,
+      resource: fileMetadata,
+      fields: "id"
+    })
+    return fileData
+  } catch (err) {
+    throw err
+  }
+}
+
 const uploadAttachmentToDrive = async ({
   attachmentId,
   messageId,
   fileName,
-  mimeType,
   userId = gmailUserId
 }) => {
   try {
@@ -178,8 +199,30 @@ const uploadAttachmentToDrive = async ({
     } = await uploadFile({
       data: attachment.data.data,
       fileName,
-      mimeType,
       id: attachmentId
+    })
+    const {
+      id: driveId,
+      createdTime: createdAt,
+      ...rest
+    } = await getFileFromDrive({
+      id: fileId
+    })
+    return { driveId, ...rest, createdAt }
+  } catch (err) {
+    throw err
+  }
+}
+
+const uploadLocalFileToDrive = async ({ name, localFile }) => {
+  try {
+    const { stream, mimetype } = await localFile
+    const {
+      data: { id: fileId }
+    } = await uploadLocalFile({
+      name,
+      mimetype,
+      stream
     })
     const {
       id: driveId,
@@ -237,5 +280,6 @@ module.exports = {
   getAttachment,
   sendMessage,
   uploadFile,
-  uploadAttachmentToDrive
+  uploadAttachmentToDrive,
+  uploadLocalFileToDrive
 }

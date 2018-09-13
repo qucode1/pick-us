@@ -1,5 +1,6 @@
-import React, { Component, Fragment } from "react"
+import React, { Component } from "react"
 import Dropzone from "react-dropzone"
+import Button from "@material-ui/core/Button"
 
 import { withStyles } from "@material-ui/core/styles"
 
@@ -32,6 +33,7 @@ class UserFileDropzone extends Component {
           onDrop={(accepted, rejected) => {
             this.setState({ accepted, rejected })
           }}
+          multiple={false}
           className={this.props.classes.dropzone}
         >
           <p>Hier klicken oder Datei ablegen.</p>
@@ -39,7 +41,6 @@ class UserFileDropzone extends Component {
         </Dropzone>
         <ul>
           <p>Akzeptiert:</p>
-          {console.log(this.state.accepted[0])}
           {this.state.accepted.map(file => (
             <li key={file.name}>
               {file.name} - {file.size}
@@ -54,6 +55,19 @@ class UserFileDropzone extends Component {
             </li>
           ))}
         </ul>
+        <Button
+          variant="raised"
+          onClick={() => {
+            const newFile = this.state.accepted[0]
+            this.props.addNewFile({
+              name: this.props.newFileName + `.${newFile.type.split("/")[1]}`,
+              localFile: newFile
+            })
+            this.props.onClose()
+          }}
+        >
+          Ok
+        </Button>
       </div>
     )
   }

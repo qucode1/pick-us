@@ -57,7 +57,7 @@ class GmailFilePicker extends Component {
             )
           }
           if (data) {
-            const { addNewFile, onClose, classes } = this.props
+            const { addNewFile, onClose, newFileName, classes } = this.props
             return (
               <div className={classes.root}>
                 {data.emails.messages.length ? (
@@ -77,8 +77,7 @@ class GmailFilePicker extends Component {
                               "."
                             )[1]
                             addNewFile({
-                              name:
-                                this.props.newFileName + `.${fileExtension}`,
+                              name: newFileName + `.${fileExtension}`,
                               userId: this.props.userId,
                               attachmentId: attachment.attachmentId,
                               messageId: message.id,

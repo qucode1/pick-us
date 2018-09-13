@@ -128,6 +128,15 @@ class UserFiles extends Component {
               {file.name}
             </Button>
           ))}
+          {this.props.newLocalFiles.map((file, newLocalFileIndex) => (
+            <Button
+              className={classes.newFile}
+              key={`newLocalFile-${newLocalFileIndex}`}
+              disabled
+            >
+              {file.name}
+            </Button>
+          ))}
           {this.state.savedFiles.map(file => (
             <Button
               key={file.id}

@@ -37,6 +37,7 @@ class Profile extends Component {
       email: this.props.email || "",
       messages: this.props.messages || [],
       savedFiles: this.props.files || [],
+      newLocalFiles: [],
       newFiles: []
     }
     this.handleChange = this.handleChange.bind(this)
@@ -61,7 +62,11 @@ class Profile extends Component {
     })
   }
   addNewFile = file => {
-    this.setState(state => ({ newFiles: [...state.newFiles, file] }))
+    file.localFile
+      ? this.setState(state => ({
+          newLocalFiles: [...state.newLocalFiles, file]
+        }))
+      : this.setState(state => ({ newFiles: [...state.newFiles, file] }))
   }
   updateProfile() {
     const input = {
@@ -86,6 +91,7 @@ class Profile extends Component {
           input,
           messages,
           newFiles: this.state.newFiles,
+          newLocalFiles: this.state.newLocalFiles,
           savedFiles
         }
       })

@@ -20,7 +20,8 @@ const {
   getDecodedMessage,
   getAttachment,
   uploadFile,
-  uploadAttachmentToDrive
+  uploadAttachmentToDrive,
+  uploadLocalFileToDrive
 } = require("../utils/gmail")
 
 const privateProfileKey = process.env.PRIVATEUSERKEY
@@ -395,7 +396,7 @@ const resolvers = {
   Mutation: {
     async addUser(
       _,
-      { input, location, files = [], messages = [] },
+      { input, location, files = [], localFiles = [], messages = [] },
       { idToken, profileToken, user }
     ) {
       try {
@@ -442,7 +443,6 @@ const resolvers = {
           return await user.save()
         } else return new AuthorizationError()
       } catch (error) {
-        // console.error("addUser mutation catched error", error)
         const customError = new CustomError({
           message: "addUser mutation resolver error",
           data: {
@@ -455,7 +455,6 @@ const resolvers = {
     },
     async updateMe(_, { input, location, messages }, { user }) {
       try {
-        // console.log("updateMe mutation resolver, input:", input)
         if (user && user._id) {
           await User.findByIdAndUpdate(user._id, {
             ...input,
@@ -481,7 +480,14 @@ const resolvers = {
     },
     async updateUser(
       _,
-      { id: _id, input, messages = [], savedFiles = [], newFiles = [] },
+      {
+        id: _id,
+        input,
+        messages = [],
+        savedFiles = [],
+        newFiles = [],
+        newLocalFiles = []
+      },
       { user }
     ) {
       try {
@@ -493,8 +499,11 @@ const resolvers = {
           user.email = input.email
           user.messages = messages
 
-          const newSavedFiles = await Promise.all(
-            newFiles.map(
+          const newSavedFiles = await Promise.all([
+            ...newLocalFiles.map(async newLocalFile => {
+              return await uploadLocalFileToDrive(newLocalFile)
+            }),
+            ...newFiles.map(
               async ({
                 name: fileName,
                 userId,
@@ -511,7 +520,7 @@ const resolvers = {
                 })
               }
             )
-          )
+          ])
           user.files = [...newSavedFiles, ...savedFiles]
           return await user.save()
         } else return new AuthorizationError()

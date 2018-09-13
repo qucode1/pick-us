@@ -11,8 +11,14 @@ export const ADDUSER = gql`
     $input: UserInput!
     $messages: [MessageInput]
     $files: [FileInput]
+    $localFiles: [LocalFileInput!]
   ) {
-    addUser(input: $input, messages: $messages, files: $files) {
+    addUser(
+      input: $input
+      messages: $messages
+      files: $files
+      localFiles: $localFiles
+    ) {
       id
       email
       ...UserNameFragment
@@ -31,6 +37,7 @@ export const UPDATEUSER = gql`
     $input: UserInput!
     $messages: [MessageInput]
     $newFiles: [FileInput]
+    $newLocalFiles: [LocalFileInput!]
     $savedFiles: [SavedFileInput]
   ) {
     updateUser(
@@ -38,6 +45,7 @@ export const UPDATEUSER = gql`
       input: $input
       messages: $messages
       savedFiles: $savedFiles
+      newLocalFiles: $newLocalFiles
       newFiles: $newFiles
     ) {
       id

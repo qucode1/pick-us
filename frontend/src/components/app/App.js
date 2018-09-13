@@ -156,7 +156,9 @@ class App extends Component {
             />
           )}
           <main
-            className={this.state.isLoggedIn && this.props.classes.mainWithNav}
+            className={
+              this.state.isLoggedIn ? this.props.classes.mainWithNav : ""
+            }
           >
             <div className={this.props.classes.toolbar} />
             <Router isLoggedIn={this.state.isLoggedIn} />
